@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subir Nuevo Producto | by dycrea</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="admin-body">
+
+    <header>
+        <div class="brand">
+            <img src="logo impresiones by dycrea.jpeg" alt="Logo Dycrea"> 
+            <h1>Panel <span>Vendedor</span></h1>
+        </div>
+        <div class="nav-buttons">
+            <button onclick="window.location.href='index.html'">Volver a la Tienda</button>
+        </div>
+    </header>
+
+    <main class="form-container">
+        <div class="form-card">
+            <h2>Publicar Nueva Figura 3D</h2>
+            <p>Completa los datos para agregar un producto al catálogo.</p>
+
+            <form id="form-publicar">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label>Título del Producto *</label>
+                        <input type="text" id="titulo" required placeholder="Ej: Busto Iron Man">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Categoría *</label>
+                        <select id="categoria" required>
+                            <option value="Coleccionables">Coleccionables</option>
+                            <option value="Cosplay/Props">Cosplay/Props</option>
+                            <option value="Hogar y Decoración">Hogar y Decoración</option>
+                            <option value="Repuestos">Repuestos</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Precio (CLP) *</label>
+                        <input type="number" id="precio" required placeholder="Ej: 15000">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Stock Disponible *</label>
+                        <input type="number" id="stock" required value="1" min="1">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Materiales (Separados por coma)</label>
+                        <input type="text" id="material" placeholder="Ej: PLA, Resina, PETG">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Colores (Separados por coma)</label>
+                        <input type="text" id="color" placeholder="Ej: Rojo, Azul, Negro">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Altura (cm)</label>
+                        <input type="number" id="altura" step="0.1" placeholder="Ej: 15.5">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Peso (gramos)</label>
+                        <input type="number" id="peso" step="0.1" placeholder="Ej: 250">
+                    </div>
+                </div>
+
+                <div class="input-group full-width">
+                    <label>Descripción del Producto</label>
+                    <textarea id="descripcion" rows="3" placeholder="Detalles de la impresión, calidad, etc..."></textarea>
+                </div>
+
+                <div class="input-group full-width">
+                    <label>Imagen del Producto *</label>
+                    <input type="file" id="imagen" accept="image/*" required class="file-input">
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="personalizable">
+                    <label for="personalizable">¿Es personalizable? (Permite grabar nombres, etc.)</label>
+                </div>
+
+                <button type="submit" id="btn-submit" class="btn-submit">Publicar Producto</button>
+                <p id="mensaje-estado" class="mensaje-estado"></p>
+            </form>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="publicar.js"></script>
+</body>
+</html>
