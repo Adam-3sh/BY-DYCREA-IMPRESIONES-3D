@@ -56,18 +56,14 @@
             
             <div class="filter-section">
                 <h4>Categorías</h4>
-                <ul class="category-list">
+                <ul class="category-list" id="lista-categorias-sidebar">
                     <li><a href="#" class="active">Todas</a></li>
-                    <li><a href="#">Coleccionables</a></li>
-                    <li><a href="#">Cosplay/Props</a></li>
-                    <li><a href="#">Hogar y Decoración</a></li>
-                </ul>
+                    </ul>
             </div>
 
             <div class="filter-section">
                 <h4>Material</h4>
-                <label class="custom-checkbox"><input type="checkbox" checked> <span class="checkmark"></span> PLA</label>
-                <label class="custom-checkbox"><input type="checkbox"> <span class="checkmark"></span> Resina SLA</label>
+                <label class="custom-checkbox"><input type="checkbox"> <span class="checkmark"></span> PLA+</label>
             </div>
         </aside>
 
@@ -89,6 +85,26 @@
     </main>
 
     <div id="toast-container"></div>
+
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3><i class="fas fa-shopping-cart"></i> Tu Cotización</h3>
+            <button class="close-cart" id="closeCartBtn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="cart-items" id="cartItemsContainer">
+            <p style="text-align: center; color: gray; margin-top: 20px;">Tu carrito está vacío</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total Estimado:</span>
+                <span id="cartTotalPrice">$0</span>
+            </div>
+            <button class="btn-checkout" onclick="enviarCarritoWhatsApp()">
+                <i class="fab fa-whatsapp"></i> Enviar a Cotizar
+            </button>
+        </div>
+    </div>
 
     <footer class="ecommerce-footer">
         <div class="footer-container">
