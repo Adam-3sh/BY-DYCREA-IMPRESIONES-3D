@@ -33,7 +33,7 @@
         </div>
     </header>
 
-    <main class="main-content">
+    <main class="main-content ml-style-main">
         <div id="loading-spinner" style="text-align: center; width: 100%; padding: 50px;">
             <h2>Cargando producto... <i class="fas fa-spinner fa-spin"></i></h2>
         </div>
@@ -42,17 +42,43 @@
             
             <div class="product-gallery-wrapper">
                 <div class="product-gallery">
-                    <span id="detail-badge" class="badge category">Categoría</span>
+                    <span id="detail-badge" class="badge category hide-mobile">Categoría</span>
                     <img id="detail-image" src="" alt="Imagen Principal" class="main-detail-image">
                 </div>
                 <div class="thumbnails-container" id="thumbnails-container"></div>
             </div>
 
             <div class="product-info-full">
-                <p id="detail-stock" class="stock-status"><i class="fas fa-check-circle"></i> Disponible</p>
+                <p class="stock-status ml-muted-text">Nuevo  |  <span id="detail-stock">Stock disponible</span></p>
                 <h2 id="detail-title">Título del Producto</h2>
+                
                 <div class="price-block">
                     <p id="detail-price" class="detail-price">$0</p>
+                    <div class="ml-trust-badge">
+                        <i class="fas fa-truck"></i>
+                        <div>
+                            <p class="ml-green-text">Envío a todo el país</p>
+                            <p class="ml-sub-text">Conoce los tiempos y las formas de envío.</p>
+                        </div>
+                    </div>
+                    <div class="ml-trust-badge">
+                        <i class="fas fa-undo-alt"></i>
+                        <div>
+                            <p class="ml-green-text">Devolución gratis</p>
+                            <p class="ml-sub-text">Tienes 30 días desde que lo recibes.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="specs-box">
+                    <h3>Características principales</h3>
+                    <ul class="specs-list ml-table">
+                        <li><strong>Material</strong> <span id="detail-material">-</span></li>
+                        <li><strong>Color</strong> <span id="detail-color">-</span></li>
+                        <li><strong>Altura</strong> <span id="detail-altura">- cm</span></li>
+                        <li><strong>Peso aprox.</strong> <span id="detail-peso">- g</span></li>
+                        <li><strong>Personalizable</strong> <span id="detail-pers">-</span></li>
+                    </ul>
                 </div>
 
                 <div class="detail-description">
@@ -60,20 +86,9 @@
                     <p id="detail-desc">Aquí va la descripción del producto...</p>
                 </div>
 
-                <div class="specs-box">
-                    <h3>Especificaciones Técnicas</h3>
-                    <ul class="specs-list">
-                        <li><strong>Material:</strong> <span id="detail-material">-</span></li>
-                        <li><strong>Color:</strong> <span id="detail-color">-</span></li>
-                        <li><strong>Altura:</strong> <span id="detail-altura">-</span> cm</li>
-                        <li><strong>Peso aprox:</strong> <span id="detail-peso">-</span> g</li>
-                        <li><strong>Personalizable:</strong> <span id="detail-pers">-</span></li>
-                    </ul>
-                </div>
-
                 <div class="action-buttons-full">
-                    <button id="btn-cotizar-detail" class="btn-whatsapp-large">
-                        <i class="fab fa-whatsapp"></i> Cotizar por WhatsApp
+                    <button id="btn-cotizar-detail" class="btn-whatsapp-large ml-btn">
+                        <i class="fab fa-whatsapp"></i> Agregar a mi Cotización
                     </button>
                 </div>
             </div>
