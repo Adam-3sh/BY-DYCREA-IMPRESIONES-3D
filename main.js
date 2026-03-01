@@ -242,16 +242,6 @@ if(btnFiltros && sidebar) {
         btnFiltros.innerHTML = sidebar.classList.contains('mostrar') ? '<i class="fas fa-times"></i> Ocultar Filtros' : '<i class="fas fa-filter"></i> Mostrar Filtros';
     });
 }
-if(window.innerWidth <= 768) {
-    document.querySelectorAll('.accordion-header').forEach(header => {
-        header.addEventListener('click', () => {
-            const item = header.parentElement;
-            if(item.classList.contains('activo')) item.classList.remove('activo');
-            else { document.querySelectorAll('.accordion-item').forEach(other => other.classList.remove('activo')); item.classList.add('activo'); }
-        });
-    });
-}
-
 // === CARGAR CATEGORÍAS DINÁMICAMENTE EN LA TIENDA ===
 async function cargarCategoriasStore() {
     try {
