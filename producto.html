@@ -22,7 +22,13 @@
                 <h1>dycrea.</h1>
             </div>
             <div class="header-actions">
-                <button class="btn-publicar" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> Volver a la Tienda</button>
+                <button class="icon-btn cart-btn" title="Tu Cotización" id="openCartBtnProd">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span class="cart-badge">0</span>
+                </button>
+                <button class="btn-publicar" onclick="window.location.href='index.html'">
+                    <i class="fas fa-arrow-left"></i> <span class="hide-mobile">Volver a la Tienda</span>
+                </button>
             </div>
         </div>
     </header>
@@ -73,6 +79,26 @@
             </div>
         </div>
     </main>
+
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3><i class="fas fa-shopping-cart"></i> Tu Cotización</h3>
+            <button class="close-cart" id="closeCartBtn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="cart-items" id="cartItemsContainer">
+            <p style="text-align: center; color: gray; margin-top: 20px;">Tu carrito está vacío</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total Estimado:</span>
+                <span id="cartTotalPrice">$0</span>
+            </div>
+            <button class="btn-checkout" onclick="enviarCarritoWhatsApp()">
+                <i class="fab fa-whatsapp"></i> Enviar a Cotizar
+            </button>
+        </div>
+    </div>
 
     <footer class="ecommerce-footer" style="margin-top: 0;">
         <div class="footer-bottom">

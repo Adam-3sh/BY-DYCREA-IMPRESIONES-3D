@@ -5,6 +5,81 @@ const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 function obtenerIdDeLaURL() { return new URLSearchParams(window.location.search).get('id'); }
 
+// === SISTEMA DE CARRITO (Replicado para página de detalles) ===
+let carrito = JSON.parse(localStorage.getItem('dycrea_carrito')) || [];
+
+function actualizarIconoCarrito() {
+    const badge = document.querySelector('.cart-badge');
+    if(badge) badge.textContent = carrito.length;
+}
+
+function renderizarCarrito() {
+    const container = document.getElementById('cartItemsContainer');
+    const priceText = document.getElementById('cartTotalPrice');
+    if(!container) return; 
+    
+    container.innerHTML = '';
+    let total = 0;
+
+    if(carrito.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: gray; margin-top: 20px;">Tu carrito está vacío</p>';
+        priceText.textContent = '$0';
+        return;
+    }
+
+    carrito.forEach((item, index) => {
+        total += item.precio;
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+            <img src="${item.imagen}" alt="${item.titulo}">
+            <div class="cart-item-info">
+                <div class="cart-item-title">${item.titulo}</div>
+                <div class="cart-item-price">$${item.precio.toLocaleString('es-CL')}</div>
+                <button class="btn-remove-item" onclick="eliminarDelCarrito(${index})"><i class="fas fa-trash"></i> Quitar</button>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+    priceText.textContent = `$${total.toLocaleString('es-CL')}`;
+}
+
+function eliminarDelCarrito(index) {
+    carrito.splice(index, 1);
+    localStorage.setItem('dycrea_carrito', JSON.stringify(carrito));
+    actualizarIconoCarrito();
+    renderizarCarrito();
+}
+
+function enviarCarritoWhatsApp() {
+    if(carrito.length === 0) return alert("El carrito está vacío.");
+    const numeroTelefonico = "56944018617"; // TU NÚMERO
+    let mensaje = `*¡Hola! Vengo de dycrea.cl y quiero cotizar el siguiente pedido:*\n\n`;
+    let total = 0;
+    carrito.forEach((item, i) => {
+        mensaje += `${i+1}. ${item.titulo} - $${item.precio.toLocaleString('es-CL')}\n`;
+        total += item.precio;
+    });
+    mensaje += `\n*Total Estimado: $${total.toLocaleString('es-CL')}*`;
+    window.open(`https://api.whatsapp.com/send?phone=${numeroTelefonico}&text=${encodeURIComponent(mensaje)}`, '_blank');
+}
+
+// Eventos del Carrito en UI
+document.getElementById('openCartBtnProd')?.addEventListener('click', () => {
+    document.getElementById('cartSidebar').classList.add('active');
+    document.getElementById('cartOverlay').classList.add('active');
+});
+document.getElementById('closeCartBtn')?.addEventListener('click', () => {
+    document.getElementById('cartSidebar').classList.remove('active');
+    document.getElementById('cartOverlay').classList.remove('active');
+});
+document.getElementById('cartOverlay')?.addEventListener('click', () => {
+    document.getElementById('cartSidebar').classList.remove('active');
+    document.getElementById('cartOverlay').classList.remove('active');
+});
+
+
+// === CARGAR EL DETALLE DEL PRODUCTO ===
 async function cargarDetalleProducto() {
     const productoId = obtenerIdDeLaURL();
     if (!productoId) { document.getElementById('loading-spinner').innerHTML = '<h2>Error.</h2>'; return; }
@@ -25,7 +100,7 @@ async function cargarDetalleProducto() {
                 thumb.src = img;
                 thumb.className = idx === 0 ? 'thumbnail active' : 'thumbnail';
                 thumb.addEventListener('click', () => {
-                    imgPrincipal.src = img; // Cambia la grande al hacer clic
+                    imgPrincipal.src = img; 
                     document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
                     thumb.classList.add('active');
                 });
@@ -46,19 +121,20 @@ async function cargarDetalleProducto() {
         document.getElementById('detail-peso').textContent = data.peso || 'N/A';
         document.getElementById('detail-pers').textContent = data.personalizable ? 'Sí' : 'No';
 
-        // Botón: Ahora agrega al carrito en lugar de enviar directo
+        // Botón: AGREGAR AL CARRITO
         const btnAccion = document.getElementById('btn-cotizar-detail');
         btnAccion.innerHTML = '<i class="fas fa-cart-plus"></i> Agregar a mi Cotización';
-        btnAccion.style.background = 'var(--secondary-brand)'; // Oscuro premium
+        btnAccion.style.background = 'var(--secondary-brand)'; 
         
         btnAccion.addEventListener('click', () => {
-            let carrito = JSON.parse(localStorage.getItem('dycrea_carrito')) || [];
             carrito.push({ id: data.id, titulo: data.titulo, precio: data.precio, imagen: imagenUrl });
             localStorage.setItem('dycrea_carrito', JSON.stringify(carrito));
+            actualizarIconoCarrito();
+            renderizarCarrito();
             
-            alert(`¡${data.titulo} agregado a tu carrito!\nVuelve a la tienda para revisar tu cotización.`);
-            // Opcional: Redirigir a index.html para abrir el carrito
-            window.location.href = 'index.html'; 
+            // Abre el sidebar directamente sin cambiar de página
+            document.getElementById('cartSidebar').classList.add('active');
+            document.getElementById('cartOverlay').classList.add('active');
         });
 
         document.getElementById('loading-spinner').style.display = 'none';
@@ -69,4 +145,23 @@ async function cargarDetalleProducto() {
         document.getElementById('loading-spinner').innerHTML = '<h2>Error al cargar</h2>';
     }
 }
+
+// Inicializadores
 cargarDetalleProducto();
+actualizarIconoCarrito();
+renderizarCarrito();
+
+// === LÓGICA DEL ACORDEÓN DEL FOOTER ===
+document.querySelectorAll('.accordion-header').forEach(header => {
+    header.addEventListener('click', () => {
+        if(window.innerWidth <= 768) {
+            const item = header.parentElement;
+            if(item.classList.contains('activo')) {
+                item.classList.remove('activo');
+            } else {
+                document.querySelectorAll('.accordion-item').forEach(other => other.classList.remove('activo')); 
+                item.classList.add('activo'); 
+            }
+        }
+    });
+});
