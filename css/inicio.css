@@ -1,0 +1,85 @@
+/* === HERO BANNER === */
+.hero-banner { background: linear-gradient(to right, #0f172a, #1e293b); padding: 80px 5%; color: white; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+.hero-banner::after { content: ''; position: absolute; top: 0; right: 0; width: 50%; height: 100%; background: radial-gradient(circle, rgba(158,214,21,0.15) 0%, transparent 70%); }
+.hero-content { position: relative; z-index: 2; text-align: center; max-width: 600px; }
+.hero-tag { background: rgba(255,255,255,0.1); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; letter-spacing: 2px; color: var(--primary-accent); display: inline-block; margin-bottom: 20px; }
+.hero-content h2 { font-size: 2.8rem; font-weight: 800; line-height: 1.1; margin-bottom: 15px; }
+.hero-content p { color: #cbd5e1; font-size: 1.1rem; margin-bottom: 30px; }
+
+/* === MAIN LAYOUT Y SIDEBAR === */
+.main-content { display: flex; gap: 30px; padding: 40px 5%; max-width: 1600px; margin: 0 auto; }
+.sidebar { width: 250px; flex-shrink: 0; }
+.sidebar-title { font-size: 1.2rem; margin-bottom: 20px; border-bottom: 2px solid var(--border-light); padding-bottom: 10px; display: flex; align-items: center; gap: 10px;}
+.filter-section { margin-bottom: 25px; }
+.filter-section h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; color: var(--text-dark); letter-spacing: 0.5px; }
+.category-list { list-style: none; }
+.category-list li { margin-bottom: 10px; }
+.category-list a { color: var(--text-body); font-size: 0.95rem; transition: 0.3s; }
+.category-list a:hover, .category-list a.active { color: var(--primary-dark); font-weight: 600; }
+.btn-filtros-mobile { display: none; }
+
+/* === GRILLA DE PRODUCTOS === */
+.results-area { flex: 1; }
+.results-toolbar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 20px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); margin-bottom: 25px; font-size: 0.9rem; }
+.sort-box { display: flex; align-items: center; gap: 10px; }
+.sort-select { border: 1px solid var(--border-light); padding: 8px 15px; border-radius: 6px; outline: none; font-family: inherit; font-weight: 500; cursor: pointer; }
+.products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+
+/* === PRODUCT CARD === */
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulseGlow { 0% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(255, 71, 87, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); } }
+
+.product-card { background: var(--bg-white); border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); transition: 0.3s; position: relative; display: flex; flex-direction: column; opacity: 0; animation: fadeInUp 0.5s ease forwards; }
+.product-card:hover { box-shadow: var(--shadow-md); transform: translateY(-5px); }
+.image-container { position: relative; height: 240px; background: #f9f9f9; overflow: hidden; }
+.product-image { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s ease-in-out, transform 0.5s; }
+.product-card:hover .product-image { transform: scale(1.08); }
+.badges-container { position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column; gap: 5px; z-index: 2; }
+.badge { padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+.badge.category { background: white; color: var(--text-dark); box-shadow: var(--shadow-sm); }
+.badge.oferta { background: var(--danger); color: white; animation: pulseGlow 2s infinite; }
+.quick-action-overlay { position: absolute; bottom: -60px; left: 0; width: 100%; padding: 15px; display: flex; justify-content: center; background: linear-gradient(transparent, rgba(0,0,0,0.4)); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2; }
+.product-card:hover .quick-action-overlay { bottom: 0; }
+.btn-add-cart { background: var(--primary-accent); color: var(--secondary-brand); border: none; padding: 10px 20px; border-radius: 30px; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: 0.2s; width: 100%; justify-content: center; }
+.btn-add-cart:hover { background: var(--primary-dark); transform: scale(1.05); }
+.product-info { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
+.product-title { font-size: 1rem; font-weight: 500; color: var(--text-dark); margin-bottom: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3; }
+.product-material { font-size: 0.8rem; color: var(--text-light); margin-bottom: 15px; }
+.product-price { font-size: 1.3rem; font-weight: 800; color: var(--secondary-brand); margin-top: auto; }
+
+/* Skeletons */
+.skeleton-card { background: var(--bg-white); border-radius: var(--radius-md); height: 380px; box-shadow: var(--shadow-sm); }
+.skeleton-img, .skeleton-text, .skeleton-title, .skeleton-price { background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%); background-size: 200% 100%; animation: shimmer 1.5s linear infinite; }
+.skeleton-img { height: 240px; border-radius: var(--radius-md) var(--radius-md) 0 0; }
+.skeleton-title { height: 18px; width: 80%; margin: 15px; border-radius: 4px; }
+.skeleton-text { height: 12px; width: 50%; margin: 0 15px 15px; border-radius: 4px; }
+.skeleton-price { height: 24px; width: 40%; margin: auto 15px 15px; border-radius: 4px; }
+@keyframes shimmer { to { background-position-x: -200%; } }
+
+/* INICIO MOBILE */
+@media (max-width: 768px) {
+    .hero-banner { padding: 40px 5%; }
+    .hero-content h2 { font-size: 1.8rem; }
+    .hero-content p { font-size: 0.95rem; }
+    .main-content { flex-direction: column; padding: 15px 5%; gap: 15px; }
+    .btn-filtros-mobile { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; background: var(--bg-white); border: 1px solid var(--border-light); border-radius: var(--radius-md); font-weight: 600; font-size: 1rem; color: var(--text-dark); box-shadow: var(--shadow-sm); cursor: pointer; }
+    .sidebar { display: none; width: 100%; background: var(--bg-white); padding: 20px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm); }
+    .sidebar.mostrar { display: block; } 
+    .results-toolbar { flex-direction: column; gap: 10px; align-items: flex-start; padding: 10px 0; border: none; box-shadow: none; background: transparent; }
+    .sort-box { width: 100%; justify-content: space-between; }
+    .sort-select { padding: 8px 10px; border-radius: 6px; width: 100%; }
+    
+    /* Grilla 2x2 para celular */
+    .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .product-card { min-width: 0; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    .image-container { height: auto; display: flex; flex-direction: column; } 
+    .image-container > a { display: block; width: 100%; aspect-ratio: 1 / 1; overflow: hidden; border-bottom: 1px solid #f0f0f0; }
+    .product-image { width: 100%; height: 100%; object-fit: contain; padding: 10px; }
+    .badges-container { transform: scale(0.8); transform-origin: top left; } 
+    .product-info { padding: 12px 10px; }
+    .product-title { font-size: 0.85rem; font-weight: 400; line-height: 1.3; margin-bottom: 6px; }
+    .product-material { font-size: 0.75rem; margin-bottom: 5px; color: #888; }
+    .product-price { font-size: 1.25rem; font-weight: 400; color: #333; margin-top: auto; }
+    .quick-action-overlay { position: static; padding: 10px; background: #ffffff; width: 100%; }
+    .btn-add-cart { font-size: 0.85rem; padding: 8px; box-shadow: none; width: 100%; border-radius: 6px; background: rgba(37, 211, 102, 0.1) !important; color: #25D366 !important; font-weight: 600; }
+}
