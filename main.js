@@ -7,6 +7,9 @@ const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 const contenedor = document.getElementById('contenedor-productos');
 const contadorText = document.getElementById('contador-resultados');
 
+// Variable global para guardar los productos y poder filtrarlos rápido
+let productosGlobales = [];
+
 // === SISTEMA DE NOTIFICACIONES ===
 function mostrarNotificacion(mensaje, tipo = "oferta") {
     const toastContainer = document.getElementById('toast-container');
@@ -39,12 +42,21 @@ function mostrarSkeleton() {
     }
 }
 
+// === ENVIAR A WHATSAPP ===
+// Reemplaza "569XXXXXXXX" por tu número de teléfono real con el código de Chile (56)
+function cotizarPorWhatsApp(tituloProducto) {
+    const numeroTelefonico = "56944018617"; // <--- PON TU NÚMERO AQUÍ
+    const mensaje = `¡Hola! Vengo de dycrea.cl y me gustaría cotizar el producto: *${tituloProducto}*`;
+    const url = `https://api.whatsapp.com/send?phone=${numeroTelefonico}&text=${encodeURIComponent(mensaje)}`;
+    window.open(url, '_blank');
+}
+
 // === RENDERIZAR PRODUCTOS ECOMMERCE ===
 function renderizarProductos(lista) {
     contenedor.innerHTML = ''; 
     
     if(!lista || lista.length === 0) {
-        contenedor.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">No encontramos productos.</p>';
+        contenedor.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-light); margin-top: 20px;">No encontramos productos que coincidan con tu búsqueda.</p>';
         contadorText.textContent = '0';
         return;
     }
@@ -52,7 +64,7 @@ function renderizarProductos(lista) {
     lista.forEach((prod, index) => {
         const card = document.createElement('div');
         card.className = 'product-card';
-        card.style.animationDelay = `${index * 0.1}s`; // Efecto cascada más rápido
+        card.style.animationDelay = `${index * 0.05}s`; // Cascada rápida
         
         const imagenPrincipal = (prod.imagenes && prod.imagenes.length > 0) 
             ? prod.imagenes[0] 
@@ -81,8 +93,8 @@ function renderizarProductos(lista) {
                 <img src="${imagenPrincipal}" alt="${prod.titulo}" class="product-image">
                 
                 <div class="quick-action-overlay">
-                    <button class="btn-add-cart" onclick="mostrarNotificacion('Agregado a cotización', 'info')">
-                        <i class="fas fa-shopping-cart"></i> Cotizar
+                    <button class="btn-add-cart" onclick="cotizarPorWhatsApp('${prod.titulo}')" style="background: #25D366; color: white;">
+                        <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i> Cotizar
                     </button>
                 </div>
             </div>
@@ -98,6 +110,20 @@ function renderizarProductos(lista) {
     contadorText.textContent = lista.length;
 }
 
+// === BUSCADOR EN TIEMPO REAL ===
+document.getElementById('searchInput').addEventListener('input', (e) => {
+    const textoBuscado = e.target.value.toLowerCase();
+    
+    // Filtramos la lista global de productos
+    const productosFiltrados = productosGlobales.filter(prod => {
+        return prod.titulo.toLowerCase().includes(textoBuscado) || 
+               prod.categoria.toLowerCase().includes(textoBuscado) ||
+               (prod.material && prod.material.join(' ').toLowerCase().includes(textoBuscado));
+    });
+
+    renderizarProductos(productosFiltrados);
+});
+
 // === CARGA DESDE SUPABASE ===
 async function cargarProductosDesdeBD() {
     mostrarSkeleton(); 
@@ -111,8 +137,12 @@ async function cargarProductosDesdeBD() {
 
         if (error) throw error;
 
+        // Guardamos los datos en la variable global para el buscador
+        productosGlobales = data;
+
         setTimeout(() => {
-            renderizarProductos(data);
+            renderizarProductos(productosGlobales);
+            // Mostrar notificación de bienvenida
             setTimeout(() => {
                 mostrarNotificacion("🔥 ¡Nueva colección de Props disponible!", "oferta");
             }, 1000);
@@ -133,7 +163,6 @@ const sidebar = document.getElementById('sidebarFiltros');
 if(btnFiltros && sidebar) {
     btnFiltros.addEventListener('click', () => {
         sidebar.classList.toggle('mostrar');
-        // Cambia el texto del botón al hacer clic
         if(sidebar.classList.contains('mostrar')) {
             btnFiltros.innerHTML = '<i class="fas fa-times"></i> Ocultar Filtros';
         } else {
@@ -142,20 +171,15 @@ if(btnFiltros && sidebar) {
     });
 }
 
-// === LÓGICA DEL ACORDEÓN DEL FOOTER (EXCLUSIVA PARA MÓVIL) ===
+// === LÓGICA DEL ACORDEÓN DEL FOOTER ===
 const headersAccordiones = document.querySelectorAll('.accordion-header');
-
-// Solo ejecutamos esto si estamos en una pantalla móvil y hay acordeones
 if(window.innerWidth <= 768) {
     headersAccordiones.forEach(header => {
         header.addEventListener('click', () => {
             const item = header.parentElement;
-            
-            // Si el item ya está activo, lo cerramos
             if(item.classList.contains('activo')) {
                 item.classList.remove('activo');
             } else {
-                // Si no, cerramos cualquier otro abierto y abrimos el actual
                 document.querySelectorAll('.accordion-item').forEach(otherItem => otherItem.classList.remove('activo'));
                 item.classList.add('activo');
             }
