@@ -125,3 +125,40 @@ async function cargarProductosDesdeBD() {
 }
 
 cargarProductosDesdeBD();
+
+// === LÓGICA EXCLUSIVA PARA MÓVIL (Mostrar/Ocultar Filtros) ===
+const btnFiltros = document.getElementById('btnToggleFiltros');
+const sidebar = document.getElementById('sidebarFiltros');
+
+if(btnFiltros && sidebar) {
+    btnFiltros.addEventListener('click', () => {
+        sidebar.classList.toggle('mostrar');
+        // Cambia el texto del botón al hacer clic
+        if(sidebar.classList.contains('mostrar')) {
+            btnFiltros.innerHTML = '<i class="fas fa-times"></i> Ocultar Filtros';
+        } else {
+            btnFiltros.innerHTML = '<i class="fas fa-filter"></i> Mostrar Filtros';
+        }
+    });
+}
+
+// === LÓGICA DEL ACORDEÓN DEL FOOTER (EXCLUSIVA PARA MÓVIL) ===
+const headersAccordiones = document.querySelectorAll('.accordion-header');
+
+// Solo ejecutamos esto si estamos en una pantalla móvil y hay acordeones
+if(window.innerWidth <= 768) {
+    headersAccordiones.forEach(header => {
+        header.addEventListener('click', () => {
+            const item = header.parentElement;
+            
+            // Si el item ya está activo, lo cerramos
+            if(item.classList.contains('activo')) {
+                item.classList.remove('activo');
+            } else {
+                // Si no, cerramos cualquier otro abierto y abrimos el actual
+                document.querySelectorAll('.accordion-item').forEach(otherItem => otherItem.classList.remove('activo'));
+                item.classList.add('activo');
+            }
+        });
+    });
+}

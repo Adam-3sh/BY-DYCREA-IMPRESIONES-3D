@@ -12,8 +12,8 @@
 
     <div class="top-bar">
         <span><i class="fas fa-truck"></i> Envíos a todo Chile</span>
-        <span><i class="fas fa-shield-alt"></i> Pagos Seguros</span>
-        <span><i class="fas fa-tags"></i> Descuentos en pedidos por mayor</span>
+        <span class="hide-mobile"><i class="fas fa-shield-alt"></i> Pagos Seguros</span>
+        <span class="hide-mobile"><i class="fas fa-tags"></i> Descuentos por mayor</span>
     </div>
 
     <header class="ecommerce-header">
@@ -23,18 +23,17 @@
                 <h1>dycrea.</h1>
             </div>
 
-            <div class="header-search">
-                <input type="text" id="searchInput" placeholder="Buscar figuras, repuestos, resina...">
-                <button class="search-btn"><i class="fas fa-search"></i></button>
-            </div>
-
             <div class="header-actions">
                 <button class="icon-btn" title="Mi Cuenta"><i class="far fa-user"></i></button>
                 <button class="icon-btn cart-btn" title="Cotización">
                     <i class="fas fa-shopping-bag"></i>
                     <span class="cart-badge">0</span>
                 </button>
-                <button class="btn-publicar" onclick="window.location.href='publicar.html'">+ Vender</button>
+            </div>
+
+            <div class="header-search">
+                <input type="text" id="searchInput" placeholder="Buscar figuras, resina...">
+                <button class="search-btn"><i class="fas fa-search"></i></button>
             </div>
         </div>
     </header>
@@ -42,14 +41,17 @@
     <section class="hero-banner">
         <div class="hero-content">
             <span class="hero-tag">NUEVA COLECCIÓN</span>
-            <h2>Imprime tus ideas <br>en la mejor calidad</h2>
-            <p>Descubre miles de modelos 3D listos para ser fabricados en PLA, PETG o Resina 8K.</p>
-            <button class="hero-btn">Explorar Catálogo</button>
+            <h2>Imprime tus ideas <br>en alta calidad</h2>
+            <p>Descubre miles de modelos listos para fabricar.</p>
         </div>
     </section>
 
     <main class="main-content">
-        <aside class="sidebar">
+        <button id="btnToggleFiltros" class="btn-filtros-mobile">
+            <i class="fas fa-filter"></i> Mostrar Filtros
+        </button>
+
+        <aside class="sidebar" id="sidebarFiltros">
             <h3 class="sidebar-title"><i class="fas fa-sliders-h"></i> Filtros</h3>
             
             <div class="filter-section">
@@ -59,7 +61,6 @@
                     <li><a href="#">Coleccionables</a></li>
                     <li><a href="#">Cosplay/Props</a></li>
                     <li><a href="#">Hogar y Decoración</a></li>
-                    <li><a href="#">Repuestos</a></li>
                 </ul>
             </div>
 
@@ -67,14 +68,6 @@
                 <h4>Material</h4>
                 <label class="custom-checkbox"><input type="checkbox" checked> <span class="checkmark"></span> PLA</label>
                 <label class="custom-checkbox"><input type="checkbox"> <span class="checkmark"></span> Resina SLA</label>
-                <label class="custom-checkbox"><input type="checkbox"> <span class="checkmark"></span> PETG</label>
-            </div>
-
-            <div class="filter-section">
-                <h4>Precio</h4>
-                <label class="custom-checkbox"><input type="checkbox"> <span class="checkmark"></span> Hasta $10.000</label>
-                <label class="custom-checkbox"><input type="checkbox"> <span class="checkmark"></span> $10.000 a $30.000</label>
-                <label class="custom-checkbox"><input type="checkbox"> <span class="checkmark"></span> Más de $30.000</label>
             </div>
         </aside>
 
@@ -82,12 +75,10 @@
             <div class="results-toolbar">
                 <p>Mostrando <span id="contador-resultados">0</span> resultados</p>
                 <div class="sort-box">
-                    <label>Ordenar por:</label>
                     <select class="sort-select">
                         <option>Más Relevantes</option>
                         <option>Menor Precio</option>
                         <option>Mayor Precio</option>
-                        <option>Recién Agregados</option>
                     </select>
                 </div>
             </div>
@@ -98,6 +89,68 @@
     </main>
 
     <div id="toast-container"></div>
+
+    <footer class="ecommerce-footer">
+        <div class="footer-container">
+            <div class="footer-column brand-column">
+                <img src="logo bydecrea centrado.png" alt="Logo Dycrea" class="footer-logo">
+                <p>Tu socio maker. Figuras coleccionables, repuestos técnicos y diseños personalizados.</p>
+                <div class="social-icons">
+                    <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" target="_blank"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-column accordion-item">
+                <h4 class="accordion-header">
+                    NAVEGACIÓN <i class="fas fa-chevron-down hide-desktop"></i>
+                </h4>
+                <ul class="accordion-content">
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="#">Catálogo Completo</a></li>
+                    <li><a href="#">Figuras Coleccionables</a></li>
+                    <li><a href="#">Repuestos Técnicos</a></li>
+                    <li><a href="#">Cotizar Diseño</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column accordion-item">
+                <h4 class="accordion-header">
+                    CUENTA Y SOPORTE <i class="fas fa-chevron-down hide-desktop"></i>
+                </h4>
+                <ul class="accordion-content">
+                    <li><a href="#">Mi Cuenta</a></li>
+                    <li><a href="#">Mis Cotizaciones</a></li>
+                    <li><a href="#">Preguntas Frecuentes (FAQ)</a></li>
+                    <li><a href="#">Términos y Condiciones</a></li>
+                    <li><a href="publicar.html">Panel Vendedor</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column accordion-item">
+                <h4 class="accordion-header">
+                    CONTACTO Y UBICACIÓN <i class="fas fa-chevron-down hide-desktop"></i>
+                </h4>
+                <ul class="accordion-content info-list">
+                    <li><i class="fas fa-envelope"></i> contacto@dycrea.cl</li>
+                    <li><i class="fas fa-phone"></i> (411) 235-5680</li>
+                    <li><i class="fas fa-map-marker-alt"></i> Santiago, Chile</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="footer-bottom-container">
+                <p>© 2024 by dycrea impresiones 3d. Todos los derechos reservados.</p>
+                <div class="payment-icons">
+                    <img src="https://static.wixstatic.wiximage.com/media/79f5f2_61866601217483b441c0bc76~mv2.png" alt="Webpay" title="Webpay">
+                    <i class="fab fa-cc-visa"></i>
+                    <i class="fab fa-cc-mastercard"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="main.js"></script>

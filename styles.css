@@ -197,3 +197,251 @@ a { text-decoration: none; color: inherit; }
 .toast { background: var(--secondary-brand); color: white; padding: 15px 25px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 15px; transform: translateX(120%); opacity: 0; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
 .toast.show { transform: translateX(0); opacity: 1; }
 .toast-icon { background: var(--primary-accent); color: var(--secondary-brand); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+
+
+/* ==============================================================
+   📱 OPTIMIZACIÓN MOBILE-FIRST (APLICACIÓN MÓVIL)
+   ============================================================== */
+
+/* Ocultar el botón de filtros en pantallas grandes (PC) */
+.btn-filtros-mobile { display: none; }
+
+@media (max-width: 768px) {
+    /* 1. Limpieza de Header y Top Bar */
+    .hide-mobile { display: none; }
+    .top-bar { justify-content: center; } /* Centra el texto de envíos */
+    
+    .header-container { flex-wrap: wrap; gap: 15px; padding: 15px 5%; }
+    .brand h1 { font-size: 1.3rem; }
+    
+    /* El buscador pasa a ocupar toda la línea de abajo */
+    .header-search { order: 3; flex: 0 0 100%; max-width: 100%; }
+
+    /* 2. Banner Hero más compacto */
+    .hero-banner { padding: 40px 5%; }
+    .hero-content h2 { font-size: 1.8rem; }
+    .hero-content p { font-size: 0.95rem; }
+
+    /* 3. Reorganización del Main */
+    .main-content { flex-direction: column; padding: 20px 5%; gap: 15px; }
+
+    /* 4. Sistema de Filtros Colapsables */
+    .btn-filtros-mobile {
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+        width: 100%; padding: 12px; background: var(--bg-white);
+        border: 1px solid var(--border-light); border-radius: var(--radius-md);
+        font-weight: 600; font-size: 1rem; color: var(--text-dark);
+        box-shadow: var(--shadow-sm); cursor: pointer;
+    }
+    
+    .sidebar {
+        display: none; /* Oculto por defecto en móvil */
+        width: 100%; background: var(--bg-white);
+        padding: 20px; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);
+    }
+    .sidebar.mostrar { display: block; } /* Esta clase la pondremos con JS */
+
+    .results-toolbar { flex-direction: column; gap: 10px; align-items: flex-start; }
+    .sort-box { width: 100%; justify-content: space-between; }
+
+    /* 5. Grilla E-Commerce Móvil (2 PRODUCTOS POR FILA) */
+    .products-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+    /* 6. Adaptación Táctil de las Tarjetas (No Hover) */
+    .image-container { height: 160px; } /* Imágenes más cuadradas */
+    .badges-container { transform: scale(0.85); transform-origin: top left; } /* Badges más pequeños */
+    
+    .product-info { padding: 10px; }
+    .product-title { font-size: 0.85rem; }
+    .product-price { font-size: 1.1rem; }
+    .product-material { font-size: 0.75rem; margin-bottom: 5px; }
+
+    /* Forzamos a que el botón "Cotizar" SIEMPRE esté visible en móvil debajo de la imagen */
+    .quick-action-overlay {
+        position: relative; bottom: 0; padding: 10px;
+        background: transparent; z-index: 1;
+    }
+    .btn-add-cart {
+        font-size: 0.8rem; padding: 8px; box-shadow: none;
+        border: 1px solid var(--primary-accent); background: var(--bg-white);
+    }
+
+    /* 7. Notificaciones centradas abajo */
+    #toast-container { left: 20px; right: 20px; bottom: 20px; align-items: center; }
+    .toast { width: 100%; justify-content: center; }
+}
+
+/* =========================================
+   🚀 ESTILOS DEL FOOTER (PIE DE PÁGINA)
+   ========================================= */
+
+.ecommerce-footer {
+    background-color: var(--secondary-brand); /* Fondo oscuro premium */
+    color: white;
+    padding: 60px 5% 0; /* Un espacio arriba */
+    margin-top: 50px;
+    font-size: 0.9rem;
+    font-weight: 300;
+}
+
+.footer-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 columnas en desktop */
+    gap: 30px;
+    max-width: 1600px;
+    margin: 0 auto 50px; /* Un espacio abajo */
+}
+
+.footer-column h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--primary-accent); /* Tu verde de acento */
+    text-transform: uppercase;
+}
+
+.brand-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.footer-logo {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+.brand-column p {
+    color: #cbd5e1;
+    line-height: 1.4;
+}
+
+.accordion-content {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.accordion-content li a {
+    color: #cbd5e1;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+.accordion-content li a:hover {
+    color: var(--primary-accent);
+}
+
+.social-icons {
+    display: flex;
+    gap: 15px;
+    font-size: 1.2rem;
+    margin-top: 10px;
+}
+.social-icons a {
+    color: #cbd5e1;
+    transition: color 0.3s;
+}
+.social-icons a:hover {
+    color: var(--primary-accent);
+}
+
+.info-list i {
+    color: var(--primary-accent);
+    margin-right: 10px;
+}
+
+/* Barra inferior de Derechos */
+.footer-bottom {
+    background-color: rgba(0, 0, 0, 0.2); /* Un fondo negro muy sutil */
+    padding: 20px 5%;
+    font-size: 0.8rem;
+    color: #cbd5e1;
+}
+.footer-bottom-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.payment-icons {
+    display: flex;
+    gap: 15px;
+    font-size: 1.2rem;
+    align-items: center;
+}
+.payment-icons img {
+    height: 25px;
+    width: auto;
+}
+
+/* =========================================
+   📱 ADAPTACIÓN MOBILE (CELULARES)
+   ========================================= */
+
+@media (max-width: 768px) {
+    .ecommerce-footer {
+        padding: 40px 5% 0;
+    }
+
+    /* Las columnas en celular se vuelven una lista vertical colapsable */
+    .footer-container {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .brand-column {
+        align-items: center;
+        text-align: center;
+        padding-bottom: 30px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* Lógica del Acordeón para móvil */
+    .accordion-item {
+        margin-bottom: 10px;
+    }
+    .accordion-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.05); /* Un fondo muy sutil */
+        padding: 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        user-select: none;
+    }
+    .accordion-header i {
+        font-size: 0.8rem;
+        transition: transform 0.3s ease;
+    }
+
+    /* Rotar la flecha si está abierto */
+    .accordion-item.activo .accordion-header i {
+        transform: rotate(180deg);
+    }
+
+    /* Ocultar el contenido por defecto en móvil y animar su aparición */
+    .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        padding: 0 15px;
+    }
+
+    /* Clase que activaremos con JS para mostrar el contenido */
+    .accordion-item.activo .accordion-content {
+        max-height: 200px; /* Un valor lo suficientemente alto */
+        padding: 15px;
+    }
+
+    /* Ocultar íconos que solo son para desktop en móvil si es necesario */
+    .hide-desktop { display: inline; }
+
+    /* Barra inferior apilada en móvil */
+    .footer-bottom-container {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+}
