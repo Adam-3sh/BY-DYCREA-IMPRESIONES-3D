@@ -7,7 +7,7 @@ const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 const contenedor = document.getElementById('contenedor-productos');
 const contadorText = document.getElementById('contador-resultados');
 
-// Variable global para guardar los productos y poder filtrarlos rápido
+// Variable global para guardar los productos
 let productosGlobales = [];
 
 // === SISTEMA DE NOTIFICACIONES ===
@@ -43,20 +43,20 @@ function mostrarSkeleton() {
 }
 
 // === ENVIAR A WHATSAPP ===
-// Reemplaza "569XXXXXXXX" por tu número de teléfono real con el código de Chile (56)
 function cotizarPorWhatsApp(tituloProducto) {
-    const numeroTelefonico = "56944018617"; // <--- PON TU NÚMERO AQUÍ
+    const numeroTelefonico = "56944018617"; // <--- RECUERDA PONER TU NÚMERO REAL AQUÍ
     const mensaje = `¡Hola! Vengo de dycrea.cl y me gustaría cotizar el producto: *${tituloProducto}*`;
     const url = `https://api.whatsapp.com/send?phone=${numeroTelefonico}&text=${encodeURIComponent(mensaje)}`;
     window.open(url, '_blank');
 }
 
-// === RENDERIZAR PRODUCTOS ECOMMERCE ===
+// === RENDERIZAR PRODUCTOS ===
+// === RENDERIZAR PRODUCTOS ===
 function renderizarProductos(lista) {
     contenedor.innerHTML = ''; 
     
     if(!lista || lista.length === 0) {
-        contenedor.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-light); margin-top: 20px;">No encontramos productos que coincidan con tu búsqueda.</p>';
+        contenedor.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-light); margin-top: 20px;">No encontramos productos con esos filtros.</p>';
         contadorText.textContent = '0';
         return;
     }
@@ -64,7 +64,7 @@ function renderizarProductos(lista) {
     lista.forEach((prod, index) => {
         const card = document.createElement('div');
         card.className = 'product-card';
-        card.style.animationDelay = `${index * 0.05}s`; // Cascada rápida
+        card.style.animationDelay = `${index * 0.05}s`; 
         
         const imagenPrincipal = (prod.imagenes && prod.imagenes.length > 0) 
             ? prod.imagenes[0] 
@@ -76,7 +76,6 @@ function renderizarProductos(lista) {
 
         const materialPrincipal = (prod.material && prod.material.length > 0) ? prod.material.join(', ') : 'Impresión 3D';
 
-        // Lógica de Badges
         let badgesHTML = `<span class="badge category">${prod.categoria}</span>`;
         if(prod.precio < 10000) {
             badgesHTML += `<span class="badge oferta">¡Oferta!</span>`;
@@ -84,22 +83,26 @@ function renderizarProductos(lista) {
             badgesHTML += `<span class="badge" style="background:#ff9f43; color:white;">Últimas uds.</span>`;
         }
 
-        // HTML DE LA TARJETA ECOMMERCE
+        // HTML DE LA TARJETA ECOMMERCE ACTUALIZADA
         card.innerHTML = `
             <div class="image-container">
                 <div class="badges-container">
                     ${badgesHTML}
                 </div>
-                <img src="${imagenPrincipal}" alt="${prod.titulo}" class="product-image">
+                <a href="producto.html?id=${prod.id}">
+                    <img src="${imagenPrincipal}" alt="${prod.titulo}" class="product-image">
+                </a>
                 
                 <div class="quick-action-overlay">
                     <button class="btn-add-cart" onclick="cotizarPorWhatsApp('${prod.titulo}')" style="background: #25D366; color: white;">
-                        <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i> Cotizar
+                        <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i> Cotizar Rápidamente
                     </button>
                 </div>
             </div>
             <div class="product-info">
-                <h3 class="product-title">${prod.titulo}</h3>
+                <a href="producto.html?id=${prod.id}">
+                    <h3 class="product-title" style="cursor: pointer; color: inherit;">${prod.titulo}</h3>
+                </a>
                 <div class="product-material">${materialPrincipal}</div>
                 <div class="product-price">${precioFormateado}</div>
             </div>
@@ -110,18 +113,71 @@ function renderizarProductos(lista) {
     contadorText.textContent = lista.length;
 }
 
-// === BUSCADOR EN TIEMPO REAL ===
-document.getElementById('searchInput').addEventListener('input', (e) => {
-    const textoBuscado = e.target.value.toLowerCase();
+// ==========================================
+// 🚀 NUEVO: MOTOR DE FILTROS INTELIGENTE
+// ==========================================
+function aplicarFiltros() {
+    // 1. Obtener texto del buscador
+    const textoBuscado = document.getElementById('searchInput').value.toLowerCase();
     
-    // Filtramos la lista global de productos
+    // 2. Obtener la categoría seleccionada (la que tiene la clase 'active')
+    const categoriaActivaElement = document.querySelector('.category-list a.active');
+    const categoriaSeleccionada = categoriaActivaElement ? categoriaActivaElement.textContent.trim() : 'Todas';
+
+    // 3. Obtener los materiales seleccionados (checkboxes marcados)
+    // Buscamos solo en la sección de materiales para evitar cruces con otros checkboxes
+    const checkboxesMaterial = document.querySelectorAll('.filter-section:nth-of-type(2) input[type="checkbox"]:checked');
+    const materialesSeleccionados = Array.from(checkboxesMaterial).map(cb => cb.closest('label').textContent.trim());
+
+    // 4. Filtrar la lista global usando las 3 condiciones
     const productosFiltrados = productosGlobales.filter(prod => {
-        return prod.titulo.toLowerCase().includes(textoBuscado) || 
-               prod.categoria.toLowerCase().includes(textoBuscado) ||
-               (prod.material && prod.material.join(' ').toLowerCase().includes(textoBuscado));
+        
+        // Filtro A: Texto
+        const coincideTexto = prod.titulo.toLowerCase().includes(textoBuscado) || 
+                              prod.categoria.toLowerCase().includes(textoBuscado) ||
+                              (prod.material && prod.material.join(' ').toLowerCase().includes(textoBuscado));
+        
+        // Filtro B: Categoría
+        const coincideCategoria = (categoriaSeleccionada === 'Todas') || (prod.categoria === categoriaSeleccionada);
+
+        // Filtro C: Materiales
+        let coincideMaterial = true;
+        if (materialesSeleccionados.length > 0) {
+            if (prod.material && prod.material.length > 0) {
+                // Chequea si alguno de los materiales del producto está en la lista de seleccionados
+                coincideMaterial = prod.material.some(m => materialesSeleccionados.includes(m));
+            } else {
+                coincideMaterial = false; // Si seleccionó filtro de material pero el producto no tiene, se oculta
+            }
+        }
+
+        // El producto solo se muestra si cumple LAS 3 condiciones a la vez
+        return coincideTexto && coincideCategoria && coincideMaterial;
     });
 
+    // 5. Dibujar los resultados filtrados
     renderizarProductos(productosFiltrados);
+}
+
+// Escuchar cambios en el Buscador
+document.getElementById('searchInput').addEventListener('input', aplicarFiltros);
+
+// Escuchar clics en las Categorías
+document.querySelectorAll('.category-list a').forEach(enlace => {
+    enlace.addEventListener('click', (e) => {
+        e.preventDefault(); // Evita que la página salte hacia arriba
+        // Quitar la clase active a todas las categorías
+        document.querySelectorAll('.category-list a').forEach(el => el.classList.remove('active'));
+        // Poner la clase active solo a la que hicimos clic
+        e.target.classList.add('active');
+        // Ejecutar los filtros
+        aplicarFiltros();
+    });
+});
+
+// Escuchar cambios en los Checkboxes de Material y Precio
+document.querySelectorAll('.sidebar input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener('change', aplicarFiltros);
 });
 
 // === CARGA DESDE SUPABASE ===
@@ -137,14 +193,15 @@ async function cargarProductosDesdeBD() {
 
         if (error) throw error;
 
-        // Guardamos los datos en la variable global para el buscador
         productosGlobales = data;
 
         setTimeout(() => {
-            renderizarProductos(productosGlobales);
-            // Mostrar notificación de bienvenida
+            // En vez de renderizar todo ciegamente, llamamos a aplicarFiltros 
+            // para que respete si hay algún checkbox marcado por defecto en tu HTML
+            aplicarFiltros();
+            
             setTimeout(() => {
-                mostrarNotificacion("🔥 ¡Nueva colección de Props disponible!", "oferta");
+                mostrarNotificacion("🔥 ¡Catálogo actualizado!", "oferta");
             }, 1000);
         }, 600); 
 

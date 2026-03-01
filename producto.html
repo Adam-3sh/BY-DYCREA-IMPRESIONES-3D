@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Producto | by dycrea</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="top-bar">
+        <span><i class="fas fa-truck"></i> Envíos a todo Chile</span>
+        <span class="hide-mobile"><i class="fas fa-shield-alt"></i> Pagos Seguros</span>
+    </div>
+
+    <header class="ecommerce-header">
+        <div class="header-container">
+            <div class="brand" onclick="window.location.href='index.html'">
+                <img src="logo bydecrea centrado.png" alt="Logo Dycrea"> 
+                <h1>dycrea.</h1>
+            </div>
+            <div class="header-actions">
+                <button class="btn-publicar" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> Volver a la Tienda</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div id="loading-spinner" style="text-align: center; width: 100%; padding: 50px;">
+            <h2>Cargando producto... <i class="fas fa-spinner fa-spin"></i></h2>
+        </div>
+
+        <div class="product-detail-layout" id="product-detail-content" style="display: none;">
+            
+            <div class="product-gallery">
+                <span id="detail-badge" class="badge category">Categoría</span>
+                <img id="detail-image" src="" alt="Imagen del Producto" class="main-detail-image">
+            </div>
+
+            <div class="product-info-full">
+                <p id="detail-stock" class="stock-status"><i class="fas fa-check-circle"></i> Disponible</p>
+                <h2 id="detail-title">Título del Producto</h2>
+                <div class="price-block">
+                    <p id="detail-price" class="detail-price">$0</p>
+                </div>
+
+                <div class="detail-description">
+                    <h3>Descripción</h3>
+                    <p id="detail-desc">Aquí va la descripción del producto...</p>
+                </div>
+
+                <div class="specs-box">
+                    <h3>Especificaciones Técnicas</h3>
+                    <ul class="specs-list">
+                        <li><strong>Material:</strong> <span id="detail-material">-</span></li>
+                        <li><strong>Color:</strong> <span id="detail-color">-</span></li>
+                        <li><strong>Altura:</strong> <span id="detail-altura">-</span> cm</li>
+                        <li><strong>Peso aprox:</strong> <span id="detail-peso">-</span> g</li>
+                        <li><strong>Personalizable:</strong> <span id="detail-pers">-</span></li>
+                    </ul>
+                </div>
+
+                <div class="action-buttons-full">
+                    <button id="btn-cotizar-detail" class="btn-whatsapp-large">
+                        <i class="fab fa-whatsapp"></i> Cotizar por WhatsApp
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="ecommerce-footer" style="margin-top: 0;">
+        <div class="footer-bottom">
+            <div class="footer-bottom-container" style="justify-content: center;">
+                <p>© 2024 by dycrea impresiones 3d. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="producto.js"></script>
+</body>
+</html>

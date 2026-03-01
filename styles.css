@@ -445,3 +445,145 @@ a { text-decoration: none; color: inherit; }
         text-align: center;
     }
 }
+
+/* =========================================
+   🔍 ESTILOS DETALLE DE PRODUCTO
+   ========================================= */
+
+.product-detail-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    background: var(--bg-white);
+    padding: 40px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.product-gallery {
+    position: relative;
+    background: #f9f9f9;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.main-detail-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    max-height: 600px;
+}
+
+.product-gallery .badge {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 0.9rem;
+    padding: 8px 15px;
+}
+
+.product-info-full {
+    display: flex;
+    flex-direction: column;
+}
+
+.stock-status {
+    color: #27ae60;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+#detail-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    color: var(--secondary-brand);
+}
+
+.price-block {
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 25px;
+}
+
+.detail-price {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--primary-dark);
+}
+
+.detail-description h3, .specs-box h3 {
+    font-size: 1.2rem;
+    color: var(--secondary-brand);
+    margin-bottom: 15px;
+}
+
+.detail-description p {
+    color: var(--text-body);
+    line-height: 1.7;
+    margin-bottom: 30px;
+}
+
+.specs-box {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.specs-list {
+    list-style: none;
+    padding: 0;
+}
+
+.specs-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.specs-list li:last-child {
+    border-bottom: none;
+}
+
+.btn-whatsapp-large {
+    width: 100%;
+    background: #25D366;
+    color: white;
+    border: none;
+    padding: 18px;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+}
+
+.btn-whatsapp-large:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6);
+}
+
+/* Responsivo para Celulares */
+@media (max-width: 768px) {
+    .product-detail-layout {
+        grid-template-columns: 1fr;
+        padding: 20px;
+        gap: 30px;
+    }
+    #detail-title { font-size: 1.8rem; }
+    .detail-price { font-size: 2rem; }
+}
