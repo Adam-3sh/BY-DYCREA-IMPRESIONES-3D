@@ -4,6 +4,23 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 
 const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+// === 🔒 BARRERA DE SEGURIDAD (CANDADO) ===
+async function verificarSesion() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (!session) {
+        // Si no hay sesión iniciada, patearlo al login
+        window.location.replace('login.html');
+    }
+}
+verificarSesion();
+
+// Función para cerrar sesión (logout)
+window.cerrarSesion = async function() {
+    await supabaseClient.auth.signOut();
+    window.location.replace('login.html');
+};
+// =========================================
+
 // === LÓGICA DE MÓDULOS DESPLEGABLES ===
 window.toggleModule = function(headerElement) {
     const module = headerElement.parentElement;

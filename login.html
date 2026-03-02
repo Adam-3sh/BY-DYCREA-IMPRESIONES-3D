@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Admin | by dycrea</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/global.css">
+    <style>
+        body { display: flex; align-items: center; justify-content: center; min-height: 100vh; background-color: #f0f2f5; margin: 0; }
+        .login-card { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); width: 100%; max-width: 400px; text-align: center; }
+        .login-card img { width: 80px; border-radius: 12px; margin-bottom: 20px; }
+        .login-card h2 { color: var(--secondary-brand); font-size: 1.8rem; font-weight: 800; margin-bottom: 5px; }
+        .login-card p { color: var(--text-light); margin-bottom: 30px; font-size: 0.95rem; }
+        .input-group { text-align: left; margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: var(--text-dark); }
+        .input-group input { width: 100%; padding: 14px 18px; border: 2px solid #e2e8f0; border-radius: 12px; font-family: inherit; font-size: 0.95rem; outline: none; transition: 0.3s; background-color: #f8fafc; }
+        .input-group input:focus { border-color: var(--primary-accent); background-color: white; }
+        .btn-login { width: 100%; padding: 15px; background: var(--secondary-brand); color: white; border: none; border-radius: 30px; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-login:hover { background: var(--primary-accent); color: var(--secondary-brand); transform: translateY(-2px); }
+        #login-error { color: var(--danger); font-size: 0.9rem; margin-top: 15px; font-weight: 600; display: none; }
+        .back-link { display: inline-block; margin-top: 25px; font-size: 0.9rem; color: var(--text-light); transition: 0.3s; }
+        .back-link:hover { color: var(--primary-accent); }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <img src="logo bydecrea centrado.png" alt="Logo Dycrea">
+        <h2>Panel Maker</h2>
+        <p>Ingresa tus credenciales para administrar la tienda.</p>
+
+        <form id="form-login">
+            <div class="input-group">
+                <label>Correo Electrónico</label>
+                <input type="email" id="login-email" required placeholder="admin@dycrea.cl">
+            </div>
+            <div class="input-group">
+                <label>Contraseña</label>
+                <input type="password" id="login-pass" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn-login" id="btn-login">Ingresar al Panel</button>
+            <p id="login-error"><i class="fas fa-exclamation-circle"></i> Credenciales incorrectas.</p>
+        </form>
+
+        <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Volver a la Tienda</a>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const supabaseUrl = 'https://xlsrviwsygmzalbcuqyf.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhsc3J2aXdzeWdtemFsYmN1cXlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkxMjUsImV4cCI6MjA4NzA4NTEyNX0.maNasYLRxMr4lPuTrSs8tLtXYPfhcw3FXpI1vH-PAz4'; 
+        
+        // ¡Aquí estaba el error! Le cambiamos el nombre a supabaseClient
+        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        document.getElementById('form-login').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-login');
+            const errorMsg = document.getElementById('login-error');
+            
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
+            btn.disabled = true;
+            errorMsg.style.display = 'none';
+
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-pass').value;
+
+            // Usamos supabaseClient
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                errorMsg.style.display = 'block';
+                errorMsg.innerHTML = `<i class="fas fa-exclamation-circle"></i> Error: ${error.message}`;
+                btn.innerHTML = 'Ingresar al Panel';
+                btn.disabled = false;
+            } else {
+                // Si el login es exitoso, lo enviamos al panel
+                window.location.href = 'publicar.html';
+            }
+        });
+
+        // Si ya tiene sesión, mandarlo directo al panel
+        supabaseClient.auth.getSession().then(({ data: { session } }) => {
+            if (session) window.location.href = 'publicar.html';
+        });
+    </script>
+</body>
+</html>
