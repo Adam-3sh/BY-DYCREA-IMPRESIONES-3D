@@ -137,7 +137,7 @@
                 </h4>
                 <ul class="accordion-content">
                     <li><a href="#">Mi Cuenta</a></li>
-                    <li><a href="#">Mis Cotizaciones</a></li>
+                    <li><a href="#" onclick="event.preventDefault(); document.getElementById('cartSidebar').classList.add('active'); document.getElementById('cartOverlay').classList.add('active');"><i class="fas fa-shopping-cart"></i> Mi Carrito</a></li>
                     <li><a href="#">Preguntas Frecuentes (FAQ)</a></li>
                     <li><a href="#">Términos y Condiciones</a></li>
                     <li><a href="login.html">Panel Vendedor</a></li>
@@ -149,8 +149,8 @@
                     CONTACTO Y UBICACIÓN <i class="fas fa-chevron-down hide-desktop"></i>
                 </h4>
                 <ul class="accordion-content info-list">
-                    <li><i class="fas fa-envelope"></i> contacto@dycrea.cl</li>
-                    <li><i class="fas fa-phone"></i> +56 9 7413 9790</li>
+                    <li><i class="fas fa-envelope"></i> <a href="mailto:contacto@dycrea.cl">contacto@dycrea.cl</a></li>
+                    <li><i class="fas fa-phone"></i> <a href="tel:+56944018617">+56 9 4401 8617</a></li>
                     <li><i class="fas fa-map-marker-alt"></i> Santiago, Chile</li>
                 </ul>
             </div>
