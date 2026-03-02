@@ -66,7 +66,7 @@ function enviarCarritoWhatsApp() {
     if(carrito.length === 0) return alert("El carrito está vacío.");
     
     const numeroTelefonico = "56974139790"; // TU NÚMERO
-    let mensaje = `*¡Hola! Vengo de dycrea.cl y quiero cotizar el siguiente pedido:*\n\n`;
+    let mensaje = `*¡Hola! Vengo de dycrea.cl y quiero confirmar el siguiente pedido:*\n\n`;
     let total = 0;
 
     carrito.forEach((item, i) => {
@@ -75,6 +75,10 @@ function enviarCarritoWhatsApp() {
     });
 
     mensaje += `\n*Total Estimado: $${total.toLocaleString('es-CL')}*`;
+    
+    // 🔥 TEXTO NUEVO PARA FACILITAR EL PAGO
+    mensaje += `\n\nPor favor, envíame los datos bancarios para realizar la transferencia y adjuntar el comprobante. 🧾`;
+
     const url = `https://api.whatsapp.com/send?phone=${numeroTelefonico}&text=${encodeURIComponent(mensaje)}`;
     window.open(url, '_blank');
 }
