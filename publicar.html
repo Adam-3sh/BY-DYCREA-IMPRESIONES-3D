@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subir Nuevo Producto | by dycrea</title>
+    <title>Panel Maker Central | by dycrea</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/global.css">
-    <link rel="stylesheet" href="/css/panel.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/panel.css">
 </head>
 <body class="admin-body">
 
@@ -19,188 +19,197 @@
             </div>
             <div class="header-actions">
                 <button class="btn-publicar" style="background: var(--text-light);" onclick="window.location.href='index.html'">
-                    <i class="fas fa-times"></i> Cancelar / Volver
+                    <i class="fas fa-times"></i> Salir del Panel
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="form-container">
-        <div class="form-card">
-            <div class="form-header">
-                <h2><i class="fas fa-box-open"></i> Publicar Nueva Figura 3D</h2>
-                <p>Completa los datos técnicos y sube las mejores fotos de tu impresión.</p>
-            </div>
-
-            <form id="form-publicar">
-                <div class="form-grid">
-                    <div class="input-group full-width">
-                        <label>Título del Producto *</label>
-                        <input type="text" id="titulo" required placeholder="Ej: Busto Iron Man MK50 Articulado">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Categoría *</label>
-                        <div style="display: flex; gap: 10px;">
-                            <select id="categoria" required style="flex: 1;">
-                                <option value="">Cargando categorías...</option>
-                            </select>
-                            <button type="button" id="btn-add-cat" style="background: var(--primary-accent); border: none; border-radius: 8px; padding: 0 15px; cursor: pointer; color: var(--secondary-brand); font-weight: bold; font-size: 1.2rem;" title="Añadir Categoría">+</button>
-                            <button type="button" id="btn-del-cat" style="background: var(--danger); color: white; border: none; border-radius: 8px; padding: 0 15px; cursor: pointer; font-weight: bold; font-size: 1.2rem;" title="Eliminar Categoría">-</button>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Precio (CLP) *</label>
-                        <input type="number" id="precio" required placeholder="Ej: 15000">
-                    </div>
-
-                    <div class="input-group full-width">
-                        <label>Material(es) de Impresión *</label>
-                        <div class="checkbox-grid">
-                            <label class="custom-checkbox"><input type="checkbox" name="material" value="PLA+" checked> <span class="checkmark"></span> PLA+</label>
-                            <label class="custom-checkbox"><input type="checkbox" name="material" value="PETG"> <span class="checkmark"></span> PETG</label>
-                            <label class="custom-checkbox"><input type="checkbox" name="material" value="Resina SLA"> <span class="checkmark"></span> Resina SLA</label>
-                            <label class="custom-checkbox"><input type="checkbox" name="material" value="ABS"> <span class="checkmark"></span> ABS</label>
-                            <label class="custom-checkbox"><input type="checkbox" name="material" value="TPU (Flexible)"> <span class="checkmark"></span> TPU (Flexible)</label>
-                        </div>
-                    </div>
-
-                    <div class="input-group full-width">
-                        <label>Colores Disponibles (Selecciona varios) *</label>
-                        <div class="checkbox-grid color-grid">
-                            <label class="custom-checkbox"><input type="checkbox" name="color" value="Blanco"> <span class="checkmark"></span> Blanco</label>
-                            <label class="custom-checkbox"><input type="checkbox" name="color" value="Negro"> <span class="checkmark"></span> Negro</label>
-                            <label class="custom-checkbox"><input type="checkbox" name="color" value="Gris"> <span class="checkmark"></span> Gris</label>
-                            <label class="custom-checkbox"><input type="checkbox" name="color" value="Rojo"> <span class="checkmark"></span> Rojo</label>
-                            <label class="custom-checkbox"><input type="checkbox" name="color" value="Azul"> <span class="checkmark"></span> Azul</label>
-                            <label class="custom-checkbox"><input type="checkbox" name="color" value="Verde"> <span class="checkmark"></span> Verde</label>
-                            <label class="custom-checkbox"><input type="checkbox" name="color" value="Dorado/Seda"> <span class="checkmark"></span> Dorado/Seda</label>
-                            <label class="custom-checkbox"><input type="checkbox" name="color" value="Pintado a Mano"> <span class="checkmark"></span> Pintado a Mano</label>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Altura (cm)</label>
-                        <input type="number" id="altura" step="0.1" placeholder="Ej: 15.5">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Peso (gramos)</label>
-                        <input type="number" id="peso" step="0.1" placeholder="Ej: 250">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Stock Disponible *</label>
-                        <input type="number" id="stock" required value="1" min="1">
-                    </div>
-                    
-                    <div class="input-group" style="justify-content: center;">
-                        <label class="custom-checkbox" style="margin-top: 30px;">
-                            <input type="checkbox" id="personalizable"> 
-                            <span class="checkmark"></span> ¿Es personalizable? (Nombres, etc.)
-                        </label>
-                    </div>
-
-                    <div class="input-group full-width">
-                        <label>Descripción del Producto</label>
-                        <textarea id="descripcion" rows="4" placeholder="Describe los detalles, la calidad de la resolución, etc..."></textarea>
-                    </div>
-
-                    <div class="input-group full-width upload-zone">
-                        <label>Imágenes del Producto * (Puedes seleccionar múltiples fotos)</label>
-                        <div class="file-upload-wrapper">
-                            <input type="file" id="imagenes" accept="image/*" multiple required class="file-input-hidden">
-                            <button type="button" class="btn-fake-upload" onclick="document.getElementById('imagenes').click()">
-                                <i class="fas fa-cloud-upload-alt"></i> Elegir Imágenes
-                            </button>
-                            <span id="file-count-text">Ningún archivo seleccionado</span>
-                        </div>
-                        <div id="image-preview-container" class="image-preview-container"></div>
-                    </div>
-                </div>
-
-                <div class="submit-zone">
-                    <button type="submit" id="btn-submit" class="btn-submit-large">
-                        <i class="fas fa-paper-plane"></i> Publicar en el Catálogo
-                    </button>
-                    <p id="mensaje-estado" class="mensaje-estado"></p>
-                </div>
-            </form>
-        </div>
-    </main>
-
-    <main class="form-container" style="margin-top: 20px; margin-bottom: 50px;">
-        <div class="form-card">
-            <div class="form-header">
-                <h2><i class="fas fa-images"></i> Publicar Nuevo Cartel (Banner)</h2>
-                <p>Se mostrará como carrusel animado en la página de inicio.</p>
-            </div>
-
-            <form id="form-banner">
-                <div class="form-grid">
-                    <div class="input-group full-width">
-                        <label>Título Principal *</label>
-                        <input type="text" id="banner-titulo" required placeholder="Ej: ¡Semana de Star Wars!">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Subtítulo / Descripción</label>
-                        <input type="text" id="banner-desc" placeholder="Ej: 20% descuento en props">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Etiqueta Arriba (Badge)</label>
-                        <input type="text" id="banner-tag" placeholder="Ej: NUEVO, OFERTA">
-                    </div>
-
-                    <div class="input-group">
-                        <label>¿Cuántos días estará activo? (Opcional)</label>
-                        <input type="number" id="banner-dias" placeholder="Ej: 7 (Deja vacío para siempre)" min="1">
-                    </div>
-
-                    <div class="input-group full-width upload-zone">
-                        <label>Fondo del Cartel * (Recomendado: Horizontal)</label>
-                        <div class="file-upload-wrapper">
-                            <input type="file" id="banner-imagen" accept="image/*" required class="file-input-hidden">
-                            <button type="button" class="btn-fake-upload" onclick="document.getElementById('banner-imagen').click()">
-                                <i class="fas fa-cloud-upload-alt"></i> Elegir Imagen
-                            </button>
-                            <span id="banner-file-text">Ningún archivo seleccionado</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="submit-zone" style="margin-top: 20px; border-top: none;">
-                    <button type="submit" id="btn-submit-banner" class="btn-submit-large">
-                        <i class="fas fa-upload"></i> Publicar Cartel
-                    </button>
-                    <p id="mensaje-banner" class="mensaje-estado"></p>
-                </div>
-            </form>
+    <main class="form-container" style="margin-top: 40px; margin-bottom: 60px; max-width: 900px;">
+        
+        <div class="admin-header-title">
+            <h2>Panel de Control</h2>
+            <p>Selecciona el módulo que deseas administrar hoy.</p>
         </div>
 
-            <div class="form-header" style="margin-top: 50px; padding-top: 30px; border-top: 2px dashed #e2e8f0;">
-                    <h2><i class="fas fa-trash-alt"></i> Administrar Carteles</h2>
-                    <p>Elimina los banners que ya no quieras mostrar en el inicio.</p>
+        <div class="admin-module active">
+            <div class="admin-module-header" onclick="toggleModule(this)">
+                <h2><i class="fas fa-box-open"></i> 1. Publicar Nueva Figura 3D</h2>
+                <i class="fas fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="admin-module-content">
+                <form id="form-publicar">
+                    <div class="form-grid">
+                        <div class="input-group full-width">
+                            <label>Título del Producto *</label>
+                            <input type="text" id="titulo" required placeholder="Ej: Busto Iron Man MK50 Articulado">
+                        </div>
+
+                        <div class="input-group">
+                            <label>Categoría *</label>
+                            <div style="display: flex; gap: 10px;">
+                                <select id="categoria" required style="flex: 1;">
+                                    <option value="">Cargando categorías...</option>
+                                </select>
+                                <button type="button" id="btn-add-cat" style="background: var(--primary-accent); border: none; border-radius: 8px; padding: 0 15px; cursor: pointer; color: var(--secondary-brand); font-weight: bold; font-size: 1.2rem;" title="Añadir Categoría">+</button>
+                                <button type="button" id="btn-del-cat" style="background: var(--danger); color: white; border: none; border-radius: 8px; padding: 0 15px; cursor: pointer; font-weight: bold; font-size: 1.2rem;" title="Eliminar Categoría">-</button>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Precio (CLP) *</label>
+                            <input type="number" id="precio" required placeholder="Ej: 15000">
+                        </div>
+
+                        <div class="input-group full-width">
+                            <label>Material(es) de Impresión *</label>
+                            <div class="checkbox-grid">
+                                <label class="custom-checkbox"><input type="checkbox" name="material" value="PLA+" checked> <span class="checkmark"></span> PLA+</label>
+                                <label class="custom-checkbox"><input type="checkbox" name="material" value="PETG"> <span class="checkmark"></span> PETG</label>
+                                <label class="custom-checkbox"><input type="checkbox" name="material" value="Resina SLA"> <span class="checkmark"></span> Resina SLA</label>
+                                <label class="custom-checkbox"><input type="checkbox" name="material" value="ABS"> <span class="checkmark"></span> ABS</label>
+                                <label class="custom-checkbox"><input type="checkbox" name="material" value="TPU (Flexible)"> <span class="checkmark"></span> TPU (Flexible)</label>
+                            </div>
+                        </div>
+
+                        <div class="input-group full-width">
+                            <label>Colores Disponibles (Selecciona varios) *</label>
+                            <div class="checkbox-grid color-grid">
+                                <label class="custom-checkbox"><input type="checkbox" name="color" value="Blanco"> <span class="checkmark"></span> Blanco</label>
+                                <label class="custom-checkbox"><input type="checkbox" name="color" value="Negro"> <span class="checkmark"></span> Negro</label>
+                                <label class="custom-checkbox"><input type="checkbox" name="color" value="Gris"> <span class="checkmark"></span> Gris</label>
+                                <label class="custom-checkbox"><input type="checkbox" name="color" value="Rojo"> <span class="checkmark"></span> Rojo</label>
+                                <label class="custom-checkbox"><input type="checkbox" name="color" value="Azul"> <span class="checkmark"></span> Azul</label>
+                                <label class="custom-checkbox"><input type="checkbox" name="color" value="Verde"> <span class="checkmark"></span> Verde</label>
+                                <label class="custom-checkbox"><input type="checkbox" name="color" value="Dorado/Seda"> <span class="checkmark"></span> Dorado/Seda</label>
+                                <label class="custom-checkbox"><input type="checkbox" name="color" value="Pintado a Mano"> <span class="checkmark"></span> Pintado a Mano</label>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Altura (cm)</label>
+                            <input type="number" id="altura" step="0.1" placeholder="Ej: 15.5">
+                        </div>
+
+                        <div class="input-group">
+                            <label>Peso (gramos)</label>
+                            <input type="number" id="peso" step="0.1" placeholder="Ej: 250">
+                        </div>
+
+                        <div class="input-group">
+                            <label>Stock Disponible *</label>
+                            <input type="number" id="stock" required value="1" min="1">
+                        </div>
+                        
+                        <div class="input-group" style="justify-content: center;">
+                            <label class="custom-checkbox" style="margin-top: 30px;">
+                                <input type="checkbox" id="personalizable"> 
+                                <span class="checkmark"></span> ¿Es personalizable? (Nombres, etc.)
+                            </label>
+                        </div>
+
+                        <div class="input-group full-width">
+                            <label>Descripción del Producto</label>
+                            <textarea id="descripcion" rows="4" placeholder="Describe los detalles, la calidad de la resolución, etc..."></textarea>
+                        </div>
+
+                        <div class="input-group full-width upload-zone">
+                            <label>Imágenes del Producto * (Puedes seleccionar múltiples fotos)</label>
+                            <div class="file-upload-wrapper">
+                                <input type="file" id="imagenes" accept="image/*" multiple required class="file-input-hidden">
+                                <button type="button" class="btn-fake-upload" onclick="document.getElementById('imagenes').click()">
+                                    <i class="fas fa-cloud-upload-alt"></i> Elegir Imágenes
+                                </button>
+                                <span id="file-count-text">Ningún archivo seleccionado</span>
+                            </div>
+                            <div id="image-preview-container" class="image-preview-container"></div>
+                        </div>
+                    </div>
+
+                    <div class="submit-zone">
+                        <button type="submit" id="btn-submit" class="btn-submit-large">
+                            <i class="fas fa-paper-plane"></i> Publicar en el Catálogo
+                        </button>
+                        <p id="mensaje-estado" class="mensaje-estado"></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="admin-module">
+            <div class="admin-module-header" onclick="toggleModule(this)">
+                <h2><i class="fas fa-tags"></i> 2. Editar Productos y Ofertas</h2>
+                <i class="fas fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="admin-module-content">
+                <div id="lista-productos-admin" style="display: flex; flex-direction: column; gap: 15px;">
+                    <p style="text-align: center; color: var(--text-light);">Cargando productos...</p>
                 </div>
-                
+            </div>
+        </div>
+
+        <div class="admin-module">
+            <div class="admin-module-header" onclick="toggleModule(this)">
+                <h2><i class="fas fa-images"></i> 3. Subir Nuevo Cartel (Banner)</h2>
+                <i class="fas fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="admin-module-content">
+                <form id="form-banner">
+                    <div class="form-grid">
+                        <div class="input-group full-width">
+                            <label>Título Principal *</label>
+                            <input type="text" id="banner-titulo" required placeholder="Ej: ¡Semana de Star Wars!">
+                        </div>
+
+                        <div class="input-group">
+                            <label>Subtítulo / Descripción</label>
+                            <input type="text" id="banner-desc" placeholder="Ej: 20% descuento en props">
+                        </div>
+
+                        <div class="input-group">
+                            <label>Etiqueta Arriba (Badge)</label>
+                            <input type="text" id="banner-tag" placeholder="Ej: NUEVO, OFERTA">
+                        </div>
+
+                        <div class="input-group">
+                            <label>¿Cuántos días estará activo? (Opcional)</label>
+                            <input type="number" id="banner-dias" placeholder="Ej: 7 (Deja vacío para siempre)" min="1">
+                        </div>
+
+                        <div class="input-group full-width upload-zone">
+                            <label>Fondo del Cartel * (Recomendado: Horizontal)</label>
+                            <div class="file-upload-wrapper">
+                                <input type="file" id="banner-imagen" accept="image/*" required class="file-input-hidden">
+                                <button type="button" class="btn-fake-upload" onclick="document.getElementById('banner-imagen').click()">
+                                    <i class="fas fa-cloud-upload-alt"></i> Elegir Imagen
+                                </button>
+                                <span id="banner-file-text">Ningún archivo seleccionado</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="submit-zone" style="margin-top: 20px; border-top: none;">
+                        <button type="submit" id="btn-submit-banner" class="btn-submit-large">
+                            <i class="fas fa-upload"></i> Publicar Cartel
+                        </button>
+                        <p id="mensaje-banner" class="mensaje-estado"></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="admin-module">
+            <div class="admin-module-header" onclick="toggleModule(this)">
+                <h2><i class="fas fa-trash-alt"></i> 4. Administrar Carteles Activos</h2>
+                <i class="fas fa-chevron-down toggle-icon"></i>
+            </div>
+            <div class="admin-module-content">
                 <div id="lista-banners-admin" style="display: flex; flex-direction: column; gap: 15px;">
                     <p style="text-align: center; color: var(--text-light);">Cargando banners activos...</p>
-            </div>
-
-    </main>
-
-    <main class="form-container" style="margin-bottom: 50px;">
-        <div class="form-card">
-            <div class="form-header">
-                <h2><i class="fas fa-boxes"></i> Administrar Productos y Ofertas</h2>
-                <p>Edita precios, agrega descuentos con temporizador o elimina figuras.</p>
-            </div>
-            <div id="lista-productos-admin" style="display: flex; flex-direction: column; gap: 15px;">
-                <p style="text-align: center; color: var(--text-light);">Cargando productos...</p>
+                </div>
             </div>
         </div>
+
     </main>
 
     <div id="modal-editar-producto" class="modal-overlay">

@@ -4,6 +4,16 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 
 const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+// === LÓGICA DE MÓDULOS DESPLEGABLES ===
+window.toggleModule = function(headerElement) {
+    const module = headerElement.parentElement;
+    document.querySelectorAll('.admin-module').forEach(m => {
+        if(m !== module) m.classList.remove('active');
+    });
+
+    module.classList.toggle('active');
+};
+
 const formulario = document.getElementById('form-publicar');
 const btnSubmit = document.getElementById('btn-submit');
 const mensajeEstado = document.getElementById('mensaje-estado');
