@@ -160,7 +160,7 @@ formulario.addEventListener('submit', async (e) => {
         formulario.reset(); 
         previewContainer.innerHTML = '';
         fileCountText.textContent = "Ningún archivo seleccionado";
-        cargarBannersAdmin();|
+        cargarBannersAdmin();
 
     } catch (error) {
         console.error(error);
