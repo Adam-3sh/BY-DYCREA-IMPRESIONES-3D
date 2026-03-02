@@ -302,3 +302,106 @@ window.eliminarBanner = async function(id) {
 
 // Cargar la lista al entrar a la página
 cargarBannersAdmin();
+
+// === CARGAR, EDITAR Y ELIMINAR PRODUCTOS (ADMIN) ===
+async function cargarProductosAdmin() {
+    const contenedor = document.getElementById('lista-productos-admin');
+    if(!contenedor) return;
+
+    try {
+        const { data, error } = await supabaseClient.from('productos').select('*').order('fecha_creacion', { ascending: false });
+        if (error) throw error;
+
+        contenedor.innerHTML = '';
+        if(data.length === 0) {
+            contenedor.innerHTML = '<p style="text-align: center; color: var(--text-light);">No hay productos registrados.</p>';
+            return;
+        }
+
+        data.forEach(prod => {
+            const img = (prod.imagenes && prod.imagenes.length > 0) ? prod.imagenes[0] : 'https://via.placeholder.com/60';
+            let esOfertaValida = prod.precio_oferta && (!prod.fecha_fin_oferta || new Date(prod.fecha_fin_oferta) > new Date());
+            
+            let infoOferta = '';
+            if (esOfertaValida) infoOferta = `<span style="color:var(--danger); font-weight:800; font-size: 0.85rem;"><i class="fas fa-fire"></i> Oferta: $${prod.precio_oferta.toLocaleString('es-CL')}</span>`;
+            
+            contenedor.innerHTML += `
+                <div class="product-admin-card">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <img src="${img}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                        <div>
+                            <strong style="display: block; color: var(--text-dark);">${prod.titulo}</strong>
+                            <span style="font-size: 0.85rem; color: var(--text-light);">Normal: $${prod.precio.toLocaleString('es-CL')} | Stock: ${prod.stock}</span><br>
+                            ${infoOferta} ${prod.etiqueta_destacada ? `<span style="background:var(--secondary-brand); color:white; font-size:0.7rem; padding:3px 8px; border-radius:4px;">${prod.etiqueta_destacada}</span>` : ''}
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="abrirModalEditar('${prod.id}')" style="background: #3b82f6; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="eliminarProducto('${prod.id}')" style="background: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+    } catch (err) { console.error("Error cargando productos:", err); }
+}
+
+window.eliminarProducto = async function(id) {
+    if(confirm('¿Seguro que deseas eliminar este producto de la tienda de forma permanente?')) {
+        await supabaseClient.from('productos').delete().eq('id', id);
+        cargarProductosAdmin();
+    }
+};
+
+window.abrirModalEditar = async function(id) {
+    const { data } = await supabaseClient.from('productos').select('*').eq('id', id).single();
+    if(data) {
+        document.getElementById('edit-id').value = data.id;
+        document.getElementById('edit-titulo').value = data.titulo;
+        document.getElementById('edit-precio').value = data.precio;
+        document.getElementById('edit-stock').value = data.stock;
+        document.getElementById('edit-precio-oferta').value = data.precio_oferta || '';
+        document.getElementById('edit-etiqueta').value = data.etiqueta_destacada || '';
+        document.getElementById('edit-dias-oferta').value = ''; // Se limpia para que pongas días nuevos si quieres
+        
+        document.getElementById('modal-editar-producto').classList.add('active');
+    }
+}
+window.cerrarModalEditar = function() { document.getElementById('modal-editar-producto').classList.remove('active'); }
+
+document.getElementById('form-editar-producto')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('edit-id').value;
+    const precioOferta = document.getElementById('edit-precio-oferta').value;
+    
+    const updates = {
+        titulo: document.getElementById('edit-titulo').value,
+        precio: parseInt(document.getElementById('edit-precio').value),
+        stock: parseInt(document.getElementById('edit-stock').value),
+        precio_oferta: precioOferta ? parseInt(precioOferta) : null,
+        etiqueta_destacada: document.getElementById('edit-etiqueta').value || null
+    };
+
+    // Calcular fecha final si hay días de oferta
+    const diasOferta = document.getElementById('edit-dias-oferta').value;
+    if(diasOferta && diasOferta > 0) {
+        const date = new Date();
+        date.setDate(date.getDate() + parseInt(diasOferta));
+        updates.fecha_fin_oferta = date.toISOString();
+    } else if (!precioOferta) {
+        updates.fecha_fin_oferta = null; // Quitar la fecha si se quita la oferta
+    }
+
+    try {
+        await supabaseClient.from('productos').update(updates).eq('id', id);
+        cerrarModalEditar();
+        cargarProductosAdmin();
+        alert('✅ ¡Producto actualizado con éxito!');
+    } catch(err) { alert('Error: ' + err.message); }
+});
+
+// Inicializar lista
+cargarProductosAdmin();

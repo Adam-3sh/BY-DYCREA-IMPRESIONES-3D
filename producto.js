@@ -117,34 +117,45 @@ async function cargarDetalleProducto() {
             });
         }
         
-        // Textos
+        // Textos y Lógica de Ofertas
         document.getElementById('detail-title').textContent = data.titulo;
-        document.getElementById('detail-badge').textContent = data.categoria;
+        
+        let esOfertaValida = data.precio_oferta && (!data.fecha_fin_oferta || new Date(data.fecha_fin_oferta) > new Date());
+        let precioMostrar = esOfertaValida ? data.precio_oferta : data.precio;
+        
+        if (esOfertaValida) {
+            document.getElementById('detail-price').innerHTML = `<span style="text-decoration: line-through; color: #a0aec0; font-size: 1.5rem; margin-right: 10px;">$${data.precio.toLocaleString('es-CL')}</span> $${precioMostrar.toLocaleString('es-CL')}`;
+        } else {
+            document.getElementById('detail-price').textContent = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(precioMostrar);
+        }
+
+        // Lógica de Etiquetas en Detalle
+        let etiquetasExtras = '';
+        if (data.etiqueta_destacada) {
+            etiquetasExtras = ` <span style="background:var(--secondary-brand); color:white; font-size:0.8rem; padding: 4px 10px; border-radius:4px; margin-left: 10px;">${data.etiqueta_destacada}</span>`;
+        } else if (esOfertaValida) {
+             let dcto = Math.round(100 - (data.precio_oferta * 100 / data.precio));
+             etiquetasExtras = ` <span style="background:var(--danger); color:white; font-size:0.8rem; padding: 4px 10px; border-radius:4px; margin-left: 10px;">¡${dcto}% OFF!</span>`;
+        }
+        document.getElementById('detail-badge').innerHTML = data.categoria + etiquetasExtras;
+        
         document.getElementById('detail-desc').textContent = data.descripcion || "Sin descripción.";
-        document.getElementById('detail-price').textContent = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(data.precio);
 
-        // Especificaciones
-        document.getElementById('detail-material').textContent = (data.material && data.material.length > 0) ? data.material.join(', ') : 'N/A';
-        document.getElementById('detail-color').textContent = (data.color && data.color.length > 0) ? data.color.join(', ') : 'A elección';
-        document.getElementById('detail-altura').textContent = data.altura || 'N/A';
-        document.getElementById('detail-peso').textContent = data.peso || 'N/A';
-        document.getElementById('detail-pers').textContent = data.personalizable ? 'Sí' : 'No';
-
-        // Botón: AGREGAR AL CARRITO
+        // Más abajo, asegúrate de que el botón de AGREGAR AL CARRITO use precioMostrar
         const btnAccion = document.getElementById('btn-cotizar-detail');
         btnAccion.innerHTML = '<i class="fas fa-cart-plus"></i> Agregar a mi Cotización';
         btnAccion.style.background = 'var(--secondary-brand)'; 
         
-        btnAccion.addEventListener('click', () => {
-            carrito.push({ id: data.id, titulo: data.titulo, precio: data.precio, imagen: imagenUrl });
+        // Aquí debes reemplazar el evento del click por este:
+        btnAccion.onclick = () => {
+            carrito.push({ id: data.id, titulo: data.titulo, precio: precioMostrar, imagen: imagenUrl });
             localStorage.setItem('dycrea_carrito', JSON.stringify(carrito));
             actualizarIconoCarrito();
             renderizarCarrito();
             
-            // Abre el sidebar directamente sin cambiar de página
             document.getElementById('cartSidebar').classList.add('active');
             document.getElementById('cartOverlay').classList.add('active');
-        });
+        };
 
         document.getElementById('loading-spinner').style.display = 'none';
         document.getElementById('product-detail-content').style.display = 'grid';

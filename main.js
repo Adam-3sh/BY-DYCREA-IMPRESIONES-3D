@@ -150,19 +150,32 @@ function renderizarProductos(lista) {
     }
 
     lista.forEach((prod, index) => {
-        const card = document.createElement('div');
+       const card = document.createElement('div');
         card.className = 'product-card';
         card.style.animationDelay = `${index * 0.05}s`; 
         
         const tieneMultiples = prod.imagenes && prod.imagenes.length > 1;
-        const imagenPrincipal = (prod.imagenes && prod.imagenes.length > 0) ? prod.imagenes[0] : 'https://via.placeholder.com/500x500?text=Foto+Pendiente';
+        const imagenPrincipal = (prod.imagenes && prod.imagenes.length > 0) ? prod.imagenes[0] : 'https://via.placeholder.com/500x500';
         const dataImagesStr = tieneMultiples ? prod.imagenes.join('|||') : imagenPrincipal;
 
-        const precioFormateado = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(prod.precio);
-        const materialPrincipal = (prod.material && prod.material.length > 0) ? prod.material.join(', ') : 'Impresión 3D';
+        // --- CÁLCULO MÁGICO DE OFERTAS Y ETIQUETAS ---
+        let esOfertaValida = prod.precio_oferta && (!prod.fecha_fin_oferta || new Date(prod.fecha_fin_oferta) > new Date());
+        let precioMostrar = esOfertaValida ? prod.precio_oferta : prod.precio;
+        
+        let precioOriginalHTML = esOfertaValida ? `<span style="text-decoration: line-through; color: #a0aec0; font-size: 0.9rem; margin-right: 5px;">$${prod.precio.toLocaleString('es-CL')}</span>` : '';
+        const precioFormateado = precioOriginalHTML + new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(precioMostrar);
 
         let badgesHTML = `<span class="badge category">${prod.categoria}</span>`;
-        if(prod.precio < 10000) badgesHTML += `<span class="badge oferta">¡Oferta!</span>`;
+        if (prod.etiqueta_destacada) {
+            // Si le pusiste una etiqueta personalizada manual ("Poco Stock")
+            badgesHTML += `<span class="badge oferta" style="background:var(--secondary-brand); animation:none;">${prod.etiqueta_destacada}</span>`;
+        } else if (esOfertaValida) {
+            // Si tiene oferta pero no etiqueta manual, calcula el % de descuento automático
+            let dcto = Math.round(100 - (prod.precio_oferta * 100 / prod.precio));
+            badgesHTML += `<span class="badge oferta" style="background:var(--danger);">¡${dcto}% OFF!</span>`;
+        }
+
+        const materialPrincipal = (prod.material && prod.material.length > 0) ? prod.material.join(', ') : 'Impresión 3D';
 
         card.innerHTML = `
             <div class="image-container">
@@ -171,7 +184,7 @@ function renderizarProductos(lista) {
                     <img src="${imagenPrincipal}" alt="${prod.titulo}" class="product-image ${tieneMultiples ? 'auto-slider' : ''}" data-images="${dataImagesStr}" data-index="0">
                 </a>
                 <div class="quick-action-overlay">
-                    <button class="btn-add-cart" onclick="agregarAlCarrito('${prod.id}', '${prod.titulo.replace(/'/g, "")}', ${prod.precio}, '${imagenPrincipal}')" style="background: var(--secondary-brand); color: white;">
+                    <button class="btn-add-cart" onclick="agregarAlCarrito('${prod.id}', '${prod.titulo.replace(/'/g, "")}', ${precioMostrar}, '${imagenPrincipal}')" style="background: var(--secondary-brand); color: white;">
                         <i class="fas fa-cart-plus"></i> Al Carrito
                     </button>
                 </div>
