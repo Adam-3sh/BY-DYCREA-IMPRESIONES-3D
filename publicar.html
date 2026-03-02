@@ -130,6 +130,67 @@
         </div>
     </main>
 
+    <main class="form-container" style="margin-top: 20px; margin-bottom: 50px;">
+        <div class="form-card">
+            <div class="form-header">
+                <h2><i class="fas fa-images"></i> Publicar Nuevo Cartel (Banner)</h2>
+                <p>Se mostrará como carrusel animado en la página de inicio.</p>
+            </div>
+
+            <form id="form-banner">
+                <div class="form-grid">
+                    <div class="input-group full-width">
+                        <label>Título Principal *</label>
+                        <input type="text" id="banner-titulo" required placeholder="Ej: ¡Semana de Star Wars!">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Subtítulo / Descripción</label>
+                        <input type="text" id="banner-desc" placeholder="Ej: 20% descuento en props">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Etiqueta Arriba (Badge)</label>
+                        <input type="text" id="banner-tag" placeholder="Ej: NUEVO, OFERTA">
+                    </div>
+
+                    <div class="input-group">
+                        <label>¿Cuántos días estará activo? (Opcional)</label>
+                        <input type="number" id="banner-dias" placeholder="Ej: 7 (Deja vacío para siempre)" min="1">
+                    </div>
+
+                    <div class="input-group full-width upload-zone">
+                        <label>Fondo del Cartel * (Recomendado: Horizontal)</label>
+                        <div class="file-upload-wrapper">
+                            <input type="file" id="banner-imagen" accept="image/*" required class="file-input-hidden">
+                            <button type="button" class="btn-fake-upload" onclick="document.getElementById('banner-imagen').click()">
+                                <i class="fas fa-cloud-upload-alt"></i> Elegir Imagen
+                            </button>
+                            <span id="banner-file-text">Ningún archivo seleccionado</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="submit-zone" style="margin-top: 20px; border-top: none;">
+                    <button type="submit" id="btn-submit-banner" class="btn-submit-large" style="background: var(--secondary-brand);">
+                        <i class="fas fa-upload"></i> Publicar Cartel
+                    </button>
+                    <p id="mensaje-banner" class="mensaje-estado"></p>
+                </div>
+            </form>
+        </div>
+
+            <div class="form-header" style="margin-top: 50px; padding-top: 30px; border-top: 2px dashed #e2e8f0;">
+                    <h2><i class="fas fa-trash-alt"></i> Administrar Carteles</h2>
+                    <p>Elimina los banners que ya no quieras mostrar en el inicio.</p>
+                </div>
+                
+                <div id="lista-banners-admin" style="display: flex; flex-direction: column; gap: 15px;">
+                    <p style="text-align: center; color: var(--text-light);">Cargando banners activos...</p>
+            </div>
+
+    </main>
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="publicar.js"></script>
 </body>

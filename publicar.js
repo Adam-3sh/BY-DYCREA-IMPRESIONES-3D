@@ -160,6 +160,7 @@ formulario.addEventListener('submit', async (e) => {
         formulario.reset(); 
         previewContainer.innerHTML = '';
         fileCountText.textContent = "Ningún archivo seleccionado";
+        cargarBannersAdmin();|
 
     } catch (error) {
         console.error(error);
@@ -170,3 +171,134 @@ formulario.addEventListener('submit', async (e) => {
         btnSubmit.innerHTML = '<i class="fas fa-paper-plane"></i> Publicar en el Catálogo';
     }
 });
+
+// === GESTOR DE BANNERS ===
+const formBanner = document.getElementById('form-banner');
+const inputImagenBanner = document.getElementById('banner-imagen');
+const textBannerFile = document.getElementById('banner-file-text');
+const btnSubmitBanner = document.getElementById('btn-submit-banner');
+const msjBanner = document.getElementById('mensaje-banner');
+
+if(inputImagenBanner) {
+    inputImagenBanner.addEventListener('change', function() {
+        textBannerFile.textContent = this.files.length > 0 ? this.files[0].name : "Ningún archivo seleccionado";
+    });
+}
+
+if(formBanner) {
+    formBanner.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        btnSubmitBanner.disabled = true;
+        btnSubmitBanner.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subiendo Banner...';
+        msjBanner.textContent = '';
+
+        try {
+            const archivo = inputImagenBanner.files[0];
+            if (!archivo) throw new Error("Debes seleccionar una imagen.");
+
+            const extension = archivo.name.split('.').pop();
+            const nombreUnico = `banner_${Date.now()}.${extension}`;
+
+            // Subir imagen a storage
+            const { error: uploadError } = await supabaseClient.storage.from('imagenes').upload(nombreUnico, archivo);
+            if (uploadError) throw new Error('Error al subir imagen: ' + uploadError.message);
+
+            // Obtener URL
+            const { data: publicUrlData } = supabaseClient.storage.from('imagenes').getPublicUrl(nombreUnico);
+            const imageUrl = publicUrlData.publicUrl;
+
+            // Calcular fecha de expiración
+            const diasActivo = document.getElementById('banner-dias').value;
+            let fechaExpiracion = null;
+            if(diasActivo && diasActivo > 0) {
+                const date = new Date();
+                date.setDate(date.getDate() + parseInt(diasActivo));
+                fechaExpiracion = date.toISOString();
+            }
+
+            const nuevoBanner = {
+                titulo: document.getElementById('banner-titulo').value,
+                descripcion: document.getElementById('banner-desc').value,
+                etiqueta: document.getElementById('banner-tag').value,
+                imagen_url: imageUrl,
+                activo: true,
+                fecha_expiracion: fechaExpiracion
+            };
+
+            // Guardar en tabla
+            const { error: dbError } = await supabaseClient.from('banners').insert([nuevoBanner]);
+            if (dbError) throw new Error('Error en BD: ' + dbError.message);
+
+            msjBanner.style.color = '#27ae60';
+            msjBanner.innerHTML = '<i class="fas fa-check-circle"></i> ¡Cartel publicado con éxito!';
+            formBanner.reset();
+            textBannerFile.textContent = "Ningún archivo seleccionado";
+
+        } catch (error) {
+            console.error(error);
+            msjBanner.style.color = 'var(--danger)';
+            msjBanner.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${error.message}`;
+        } finally {
+            btnSubmitBanner.disabled = false;
+            btnSubmitBanner.innerHTML = '<i class="fas fa-upload"></i> Publicar Cartel';
+        }
+    });
+}
+
+// === CARGAR Y ELIMINAR BANNERS EN EL PANEL ===
+async function cargarBannersAdmin() {
+    const contenedor = document.getElementById('lista-banners-admin');
+    if(!contenedor) return;
+
+    try {
+        const { data, error } = await supabaseClient.from('banners').select('*').order('fecha_creacion', { ascending: false });
+        if (error) throw error;
+
+        contenedor.innerHTML = '';
+        if(data.length === 0) {
+            contenedor.innerHTML = '<p style="text-align: center; color: var(--text-light);">No tienes banners extra subidos.</p>';
+            return;
+        }
+
+        data.forEach(banner => {
+            // Mostrar fecha si expira
+            const fechaTxt = banner.fecha_expiracion 
+                ? `Expira: ${new Date(banner.fecha_expiracion).toLocaleDateString()}` 
+                : 'No expira (Fijo)';
+
+            contenedor.innerHTML += `
+                <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; flex-wrap: wrap; gap: 10px;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <img src="${banner.imagen_url}" style="width: 80px; height: 50px; object-fit: cover; border-radius: 4px; box-shadow: var(--shadow-sm);">
+                        <div>
+                            <strong style="display: block; color: var(--text-dark); font-size: 0.95rem;">${banner.titulo}</strong>
+                            <span style="font-size: 0.8rem; color: var(--text-light);"><i class="far fa-clock"></i> ${fechaTxt}</span>
+                        </div>
+                    </div>
+                    <button onclick="eliminarBanner('${banner.id}')" style="background: var(--danger); color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600;">
+                        <i class="fas fa-trash"></i> Quitar
+                    </button>
+                </div>
+            `;
+        });
+    } catch (err) {
+        console.error("Error al cargar banners admin:", err);
+    }
+}
+
+// Función expuesta globalmente para el botón
+window.eliminarBanner = async function(id) {
+    if(confirm('¿Estás seguro de que deseas eliminar este Banner?')) {
+        try {
+            const { error } = await supabaseClient.from('banners').delete().eq('id', id);
+            if (error) throw error;
+            alert('Banner eliminado correctamente.');
+            cargarBannersAdmin(); // Actualizamos la lista instantáneamente
+        } catch(err) {
+            alert('Error al eliminar banner: ' + err.message);
+        }
+    }
+};
+
+// Cargar la lista al entrar a la página
+cargarBannersAdmin();

@@ -299,3 +299,82 @@ document.querySelectorAll('.accordion-header').forEach(header => {
         }
     });
 });
+
+// === CARGAR BANNERS (CARTELES DE OFERTAS) ===
+async function cargarBanners() {
+    const container = document.getElementById('hero-slider-container');
+    if (!container) return;
+
+    try {
+        const { data, error } = await supabaseClient
+            .from('banners')
+            .select('*')
+            .eq('activo', true)
+            .order('fecha_creacion', { ascending: false });
+
+        if (error) throw error;
+
+        // 1. Filtrar los banners que ya expiraron (si tienen fecha límite)
+        const ahora = new Date();
+        const bannersActivos = data ? data.filter(b => !b.fecha_expiracion || new Date(b.fecha_expiracion) > ahora) : [];
+
+        // 2. SIEMPRE ponemos el cartel por defecto como el primero
+        let slidesHTML = `
+            <div class="slide active" style="background: linear-gradient(to right, #0f172a, #1e293b);">
+                <div class="hero-content">
+                    <span class="hero-tag">BIENVENIDO</span>
+                    <h2>Imprime tus ideas <br>en alta calidad</h2>
+                    <p>Descubre miles de modelos listos para fabricar.</p>
+                </div>
+            </div>
+        `;
+
+        // 3. Añadimos los carteles extraídos de Supabase
+        bannersActivos.forEach((banner) => {
+            slidesHTML += `
+                <div class="slide" style="background-image: url('${banner.imagen_url}');">
+                    <div class="hero-content">
+                        ${banner.etiqueta ? `<span class="hero-tag">${banner.etiqueta}</span>` : ''}
+                        <h2>${banner.titulo}</h2>
+                        ${banner.descripcion ? `<p>${banner.descripcion}</p>` : ''}
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = slidesHTML;
+        const totalSlides = bannersActivos.length + 1; // +1 por el banner por defecto
+
+        // 4. Dibujar los puntitos y activar el loop SIN ERRORES
+        if (totalSlides > 1) {
+            let dotsHTML = '<div class="slider-controls">';
+            for(let i=0; i < totalSlides; i++) {
+                dotsHTML += `<div class="slider-dot ${i === 0 ? 'active' : ''}" onclick="cambiarSlide(${i})"></div>`;
+            }
+            dotsHTML += '</div>';
+            container.innerHTML += dotsHTML;
+
+            // Limpiamos intervalos anteriores por si acaso
+            if(window.bannerInterval) clearInterval(window.bannerInterval);
+            
+            // Loop perfecto que no se rompe al final
+            window.bannerInterval = setInterval(() => {
+                const slides = document.querySelectorAll('#hero-slider-container .slide');
+                let currentIndex = Array.from(slides).findIndex(s => s.classList.contains('active'));
+                let nextIndex = (currentIndex + 1) % slides.length;
+                cambiarSlide(nextIndex);
+            }, 5000); // Cambia cada 5 segundos
+        }
+    } catch (err) {
+        console.error("Error cargando banners:", err);
+    }
+}
+
+// Función global para cambiar slides manualmente y automáticamente
+window.cambiarSlide = function(index) {
+    document.querySelectorAll('#hero-slider-container .slide').forEach((s, i) => s.classList.toggle('active', i === index));
+    document.querySelectorAll('#hero-slider-container .slider-dot').forEach((d, i) => d.classList.toggle('active', i === index));
+};
+
+// Ejecutamos
+cargarBanners();
