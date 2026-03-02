@@ -162,8 +162,9 @@ function renderizarProductos(lista) {
         let esOfertaValida = prod.precio_oferta && (!prod.fecha_fin_oferta || new Date(prod.fecha_fin_oferta) > new Date());
         let precioMostrar = esOfertaValida ? prod.precio_oferta : prod.precio;
         
-        let precioOriginalHTML = esOfertaValida ? `<span style="text-decoration: line-through; color: #a0aec0; font-size: 0.9rem; margin-right: 5px;">$${prod.precio.toLocaleString('es-CL')}</span>` : '';
-        const precioFormateado = precioOriginalHTML + new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(precioMostrar);
+        let precioOriginalHTML = esOfertaValida ? `<span style="display: block; text-decoration: line-through; color: #a0aec0; font-size: 0.85rem; font-weight: 500; margin-bottom: -2px;">Normal: $${prod.precio.toLocaleString('es-CL')}</span>` : '';
+        let colorNuevo = esOfertaValida ? 'var(--danger)' : 'var(--secondary-brand)';
+        const precioFormateado = precioOriginalHTML + `<span style="color: ${colorNuevo};">` + new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(precioMostrar) + `</span>`;
 
         let badgesHTML = `<span class="badge category">${prod.categoria}</span>`;
         if (prod.etiqueta_destacada) {

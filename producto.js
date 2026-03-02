@@ -123,12 +123,32 @@ async function cargarDetalleProducto() {
         let precioMostrar = esOfertaValida ? data.precio_oferta : data.precio;
         
         if (esOfertaValida) {
-            document.getElementById('detail-price').innerHTML = `<span style="text-decoration: line-through; color: #a0aec0; font-size: 1.5rem; margin-right: 10px;">$${data.precio.toLocaleString('es-CL')}</span> $${precioMostrar.toLocaleString('es-CL')}`;
+            let dcto = Math.round(100 - (data.precio_oferta * 100 / data.precio));
+            let textoTermina = '';
+            
+            // Si le pusiste días de duración, mostramos un aviso de urgencia
+            if (data.fecha_fin_oferta) {
+                const diasRestantes = Math.ceil((new Date(data.fecha_fin_oferta) - new Date()) / (1000 * 60 * 60 * 24));
+                textoTermina = `<div style="font-size: 0.95rem; color: var(--danger); margin-top: 8px; font-weight: 700;"><i class="fas fa-stopwatch"></i> ¡Termina en ${diasRestantes} días!</div>`;
+            }
+
+            // Diseño Premium de Oferta
+            document.getElementById('detail-price').innerHTML = `
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <span style="font-size: 1.1rem; color: #a0aec0; font-weight: 500; text-decoration: line-through;">Normal: $${data.precio.toLocaleString('es-CL')}</span>
+                    <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                        <span style="color: var(--danger); font-size: 3rem; font-weight: 800; line-height: 1;">$${precioMostrar.toLocaleString('es-CL')}</span>
+                        <span style="background: var(--danger); color: white; padding: 6px 14px; border-radius: 8px; font-size: 1.2rem; font-weight: 800; box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);">¡${dcto}% OFF!</span>
+                    </div>
+                    ${textoTermina}
+                </div>
+            `;
         } else {
+            // Diseño normal sin oferta
             document.getElementById('detail-price').textContent = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(precioMostrar);
         }
 
-        // Lógica de Etiquetas (Badges)
+        // Lógica de Etiquetas (Badges en la imagen)
         let etiquetasExtras = '';
         if (data.etiqueta_destacada) {
             etiquetasExtras = ` <span style="background:var(--secondary-brand); color:white; font-size:0.8rem; padding: 4px 10px; border-radius:4px; margin-left: 10px;">${data.etiqueta_destacada}</span>`;
