@@ -209,8 +209,13 @@ function aplicarFiltros() {
     const catActiva = document.querySelector('.category-list a.active');
     const categoria = catActiva ? catActiva.textContent.trim() : 'Todas';
     const matSeleccionados = Array.from(document.querySelectorAll('.filter-section:nth-of-type(2) input[type="checkbox"]:checked')).map(cb => cb.closest('label').textContent.trim());
+    
+    // Capturar qué opción de ordenamiento se seleccionó
+    const sortSelect = document.querySelector('.sort-select');
+    const ordenSeleccionado = sortSelect ? sortSelect.value : 'Más Relevantes';
 
-    const filtrados = productosGlobales.filter(prod => {
+    // 1. Primero filtramos (búsqueda, categoría, material)
+    let filtrados = productosGlobales.filter(prod => {
         const cTexto = prod.titulo.toLowerCase().includes(textoBuscado) || prod.categoria.toLowerCase().includes(textoBuscado);
         const cCat = (categoria === 'Todas') || (prod.categoria === categoria);
         let cMat = true;
@@ -219,9 +224,28 @@ function aplicarFiltros() {
         }
         return cTexto && cCat && cMat;
     });
+
+    // 2. Luego ordenamos los resultados filtrados
+    if (ordenSeleccionado === 'Menor Precio') {
+        filtrados.sort((a, b) => {
+            // Evaluamos el precio real (considerando si hay ofertas activas)
+            let precioA = (a.precio_oferta && (!a.fecha_fin_oferta || new Date(a.fecha_fin_oferta) > new Date())) ? a.precio_oferta : a.precio;
+            let precioB = (b.precio_oferta && (!b.fecha_fin_oferta || new Date(b.fecha_fin_oferta) > new Date())) ? b.precio_oferta : b.precio;
+            return precioA - precioB; // De menor a mayor
+        });
+    } else if (ordenSeleccionado === 'Mayor Precio') {
+        filtrados.sort((a, b) => {
+            let precioA = (a.precio_oferta && (!a.fecha_fin_oferta || new Date(a.fecha_fin_oferta) > new Date())) ? a.precio_oferta : a.precio;
+            let precioB = (b.precio_oferta && (!b.fecha_fin_oferta || new Date(b.fecha_fin_oferta) > new Date())) ? b.precio_oferta : b.precio;
+            return precioB - precioA; // De mayor a menor
+        });
+    }
+    // Si es 'Más Relevantes', no hacemos nada extra porque ya vienen ordenados por fecha de creación desde Supabase.
+
     renderizarProductos(filtrados);
 }
 
+// Escuchadores de eventos para ejecutar los filtros
 document.getElementById('searchInput').addEventListener('input', aplicarFiltros);
 document.querySelectorAll('.category-list a').forEach(enlace => {
     enlace.addEventListener('click', (e) => {
@@ -233,6 +257,11 @@ document.querySelectorAll('.category-list a').forEach(enlace => {
 });
 document.querySelectorAll('.sidebar input[type="checkbox"]').forEach(cb => cb.addEventListener('change', aplicarFiltros));
 
+// 🔥 ESCUCHADOR NUEVO PARA EL MENÚ DE ORDENAMIENTO
+const selectorOrden = document.querySelector('.sort-select');
+if (selectorOrden) {
+    selectorOrden.addEventListener('change', aplicarFiltros);
+}
 // === CARGAR BASE DE DATOS ===
 async function cargarProductosDesdeBD() {
     mostrarSkeleton(); 
