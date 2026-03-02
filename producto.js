@@ -5,7 +5,7 @@ const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 function obtenerIdDeLaURL() { return new URLSearchParams(window.location.search).get('id'); }
 
-// === SISTEMA DE CARRITO (Replicado para página de detalles) ===
+// === SISTEMA DE CARRITO ===
 let carrito = JSON.parse(localStorage.getItem('dycrea_carrito')) || [];
 
 function actualizarIconoCarrito() {
@@ -65,8 +65,6 @@ function enviarCarritoWhatsApp() {
     });
 
     mensaje += `\n*Total Estimado: $${total.toLocaleString('es-CL')}*`;
-    
-    // 🔥 TEXTO NUEVO PARA FACILITAR EL PAGO
     mensaje += `\n\nPor favor, envíame los datos bancarios para realizar la transferencia y adjuntar el comprobante. 🧾`;
 
     const url = `https://api.whatsapp.com/send?phone=${numeroTelefonico}&text=${encodeURIComponent(mensaje)}`;
@@ -87,11 +85,10 @@ document.getElementById('cartOverlay')?.addEventListener('click', () => {
     document.getElementById('cartOverlay').classList.remove('active');
 });
 
-
 // === CARGAR EL DETALLE DEL PRODUCTO ===
 async function cargarDetalleProducto() {
     const productoId = obtenerIdDeLaURL();
-    if (!productoId) { document.getElementById('loading-spinner').innerHTML = '<h2>Error.</h2>'; return; }
+    if (!productoId) { document.getElementById('loading-spinner').innerHTML = '<h2>Error. No se encontró el producto.</h2>'; return; }
 
     try {
         const { data, error } = await supabaseClient.from('productos').select('*').eq('id', productoId).single();
@@ -117,9 +114,11 @@ async function cargarDetalleProducto() {
             });
         }
         
-        // Textos y Lógica de Ofertas
+        // --- TEXTOS Y OFERTAS ---
         document.getElementById('detail-title').textContent = data.titulo;
+        document.getElementById('detail-desc').textContent = data.descripcion || "Sin descripción adicional.";
         
+        // Calcular si hay oferta vigente
         let esOfertaValida = data.precio_oferta && (!data.fecha_fin_oferta || new Date(data.fecha_fin_oferta) > new Date());
         let precioMostrar = esOfertaValida ? data.precio_oferta : data.precio;
         
@@ -129,7 +128,7 @@ async function cargarDetalleProducto() {
             document.getElementById('detail-price').textContent = new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(precioMostrar);
         }
 
-        // Lógica de Etiquetas en Detalle
+        // Lógica de Etiquetas (Badges)
         let etiquetasExtras = '';
         if (data.etiqueta_destacada) {
             etiquetasExtras = ` <span style="background:var(--secondary-brand); color:white; font-size:0.8rem; padding: 4px 10px; border-radius:4px; margin-left: 10px;">${data.etiqueta_destacada}</span>`;
@@ -138,15 +137,27 @@ async function cargarDetalleProducto() {
              etiquetasExtras = ` <span style="background:var(--danger); color:white; font-size:0.8rem; padding: 4px 10px; border-radius:4px; margin-left: 10px;">¡${dcto}% OFF!</span>`;
         }
         document.getElementById('detail-badge').innerHTML = data.categoria + etiquetasExtras;
-        
-        document.getElementById('detail-desc').textContent = data.descripcion || "Sin descripción.";
 
-        // Más abajo, asegúrate de que el botón de AGREGAR AL CARRITO use precioMostrar
+        // --- ESPECIFICACIONES TÉCNICAS (Protegidas contra errores) ---
+        // Convertimos a string seguro incluso si Supabase devuelve un formato extraño
+        const formatArray = (arr) => Array.isArray(arr) ? arr.join(', ') : (typeof arr === 'string' ? arr.replace(/[{""}]/g, '') : '');
+        
+        const matStr = formatArray(data.material);
+        const colStr = formatArray(data.color);
+
+        document.getElementById('detail-material').textContent = matStr ? matStr : 'No especificado';
+        document.getElementById('detail-color').textContent = colStr ? colStr : 'A elección';
+        document.getElementById('detail-altura').textContent = data.altura ? `${data.altura} cm` : 'No especificada';
+        document.getElementById('detail-peso').textContent = data.peso ? `${data.peso} g` : 'No especificado';
+        document.getElementById('detail-pers').textContent = data.personalizable ? 'Sí' : 'No';
+
+        // --- BOTÓN: AGREGAR AL CARRITO ---
         const btnAccion = document.getElementById('btn-cotizar-detail');
-        btnAccion.innerHTML = '<i class="fas fa-cart-plus"></i> Agregar a mi Cotización';
+        // Aquí cambiamos el texto y el ícono
+        btnAccion.innerHTML = '<i class="fas fa-cart-plus"></i> Agregar al Carrito';
         btnAccion.style.background = 'var(--secondary-brand)'; 
         
-        // Aquí debes reemplazar el evento del click por este:
+        // Al hacer clic, enviamos el precio con oferta (si la hay)
         btnAccion.onclick = () => {
             carrito.push({ id: data.id, titulo: data.titulo, precio: precioMostrar, imagen: imagenUrl });
             localStorage.setItem('dycrea_carrito', JSON.stringify(carrito));
@@ -157,12 +168,13 @@ async function cargarDetalleProducto() {
             document.getElementById('cartOverlay').classList.add('active');
         };
 
+        // Mostrar la página una vez que todo cargó
         document.getElementById('loading-spinner').style.display = 'none';
         document.getElementById('product-detail-content').style.display = 'grid';
 
     } catch (err) {
         console.error(err);
-        document.getElementById('loading-spinner').innerHTML = '<h2>Error al cargar</h2>';
+        document.getElementById('loading-spinner').innerHTML = '<h2>Error al cargar los datos de la figura.</h2>';
     }
 }
 

@@ -81,7 +81,14 @@ a { text-decoration: none; color: inherit; }
 .footer-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; max-width: 1600px; margin: 0 auto 50px; }
 .footer-column h4 { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; color: var(--primary-accent); text-transform: uppercase; }
 .brand-column { display: flex; flex-direction: column; gap: 15px; }
-.footer-logo { height: 50px; width: auto; object-fit: contain; }
+.footer-logo {
+    height: 200px; /* 🔥 Aumentamos casi al doble el tamaño (puedes subir o bajar este número) */
+    width: auto;       
+    max-width: 100%;  
+    object-fit: contain; 
+    align-self: flex-start; 
+    margin-bottom: 15px; 
+}
 .brand-column p { color: #cbd5e1; line-height: 1.4; }
 .accordion-content { list-style: none; display: flex; flex-direction: column; gap: 10px; }
 .accordion-content li a { color: #cbd5e1; transition: color 0.3s; }
