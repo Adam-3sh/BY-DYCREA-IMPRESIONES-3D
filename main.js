@@ -175,25 +175,35 @@ function renderizarProductos(lista) {
         const imagenPrincipal = (prod.imagenes && prod.imagenes.length > 0) ? prod.imagenes[0] : 'https://via.placeholder.com/500x500';
         const dataImagesStr = tieneMultiples ? prod.imagenes.join('|||') : imagenPrincipal;
 
-        // --- CÁLCULO MÁGICO DE OFERTAS Y ETIQUETAS ---
+        // --- CÁLCULO MÁGICO DE OFERTAS, ETIQUETAS Y STOCK ---
         let esOfertaValida = prod.precio_oferta && (!prod.fecha_fin_oferta || new Date(prod.fecha_fin_oferta) > new Date());
         let precioMostrar = esOfertaValida ? prod.precio_oferta : prod.precio;
+        const sinStock = prod.stock <= 0; // 🔥 Verificamos si hay stock
         
         let precioOriginalHTML = esOfertaValida ? `<span style="display: block; text-decoration: line-through; color: #a0aec0; font-size: 0.85rem; font-weight: 500; margin-bottom: -2px;">Normal: $${prod.precio.toLocaleString('es-CL')}</span>` : '';
         let colorNuevo = esOfertaValida ? 'var(--danger)' : 'var(--secondary-brand)';
         const precioFormateado = precioOriginalHTML + `<span style="color: ${colorNuevo};">` + new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(precioMostrar) + `</span>`;
 
+        // Lógica de Etiquetas (Prioridad al AGOTADO)
         let badgesHTML = `<span class="badge category">${prod.categoria}</span>`;
-        if (prod.etiqueta_destacada) {
-            // Si le pusiste una etiqueta personalizada manual ("Poco Stock")
+        if (sinStock) {
+            badgesHTML += `<span class="badge oferta" style="background: #718096; animation: none;">AGOTADO</span>`;
+        } else if (prod.etiqueta_destacada) {
             badgesHTML += `<span class="badge oferta" style="background:var(--secondary-brand); animation:none;">${prod.etiqueta_destacada}</span>`;
         } else if (esOfertaValida) {
-            // Si tiene oferta pero no etiqueta manual, calcula el % de descuento automático
             let dcto = Math.round(100 - (prod.precio_oferta * 100 / prod.precio));
             badgesHTML += `<span class="badge oferta" style="background:var(--danger);">¡${dcto}% OFF!</span>`;
         }
 
         const materialPrincipal = (prod.material && prod.material.length > 0) ? prod.material.join(', ') : 'Impresión 3D';
+
+        // Lógica del botón (Si no hay stock, se bloquea)
+        let btnCartHTML = '';
+        if (sinStock) {
+            btnCartHTML = `<button class="btn-add-cart" disabled style="background: #cbd5e1; color: #64748b; cursor: not-allowed; width: 100%;"><i class="fas fa-times-circle"></i> Agotado</button>`;
+        } else {
+            btnCartHTML = `<button class="btn-add-cart" onclick="agregarAlCarrito('${prod.id}', '${prod.titulo.replace(/'/g, "")}', ${precioMostrar}, '${imagenPrincipal}', ${esOfertaValida ? prod.precio : null})" style="background: var(--secondary-brand); color: white; width: 100%;"><i class="fas fa-cart-plus"></i> Al Carrito</button>`;
+        }
 
         card.innerHTML = `
             <div class="image-container">
@@ -202,9 +212,7 @@ function renderizarProductos(lista) {
                     <img src="${imagenPrincipal}" alt="${prod.titulo}" class="product-image ${tieneMultiples ? 'auto-slider' : ''}" data-images="${dataImagesStr}" data-index="0">
                 </a>
                 <div class="quick-action-overlay">
-                    <button class="btn-add-cart" onclick="agregarAlCarrito('${prod.id}', '${prod.titulo.replace(/'/g, "")}', ${precioMostrar}, '${imagenPrincipal}', ${esOfertaValida ? prod.precio : null})" style="background: var(--secondary-brand); color: white;">
-                        <i class="fas fa-cart-plus"></i> Al Carrito
-                    </button>
+                    ${btnCartHTML}
                 </div>
             </div>
             <div class="product-info">

@@ -185,28 +185,43 @@ async function cargarDetalleProducto() {
         document.getElementById('detail-peso').textContent = data.peso ? `${data.peso} g` : 'No especificado';
         document.getElementById('detail-pers').textContent = data.personalizable ? 'Sí' : 'No';
 
-        // --- BOTÓN: AGREGAR AL CARRITO ---
+        // --- TEXTO DE STOCK DINÁMICO ---
+        const sinStock = data.stock <= 0;
+        const textoStock = document.getElementById('detail-stock');
+        if (textoStock) {
+            textoStock.textContent = sinStock ? 'Agotado' : `${data.stock} disponibles`;
+            textoStock.style.color = sinStock ? 'var(--danger)' : '#27ae60';
+        }
+
+        // --- BOTÓN: AGREGAR AL CARRITO (Con bloqueo de stock) ---
         const btnAccion = document.getElementById('btn-cotizar-detail');
-        // Aquí cambiamos el texto y el ícono
-        btnAccion.innerHTML = '<i class="fas fa-cart-plus"></i> Agregar al Carrito';
-        btnAccion.style.background = 'var(--secondary-brand)'; 
         
-        // Al hacer clic, enviamos el precio con oferta (si la hay)
-        btnAccion.onclick = () => {
-            carrito.push({ 
-                id: data.id, 
-                titulo: data.titulo, 
-                precio: precioMostrar, 
-                imagen: imagenUrl,
-                precioOriginal: esOfertaValida ? data.precio : null // Guardamos el precio antiguo
-            });
-            localStorage.setItem('dycrea_carrito', JSON.stringify(carrito));
-            actualizarIconoCarrito();
-            renderizarCarrito();
+        if (sinStock) {
+            btnAccion.innerHTML = '<i class="fas fa-times-circle"></i> Producto Agotado';
+            btnAccion.style.background = '#cbd5e1'; 
+            btnAccion.style.color = '#64748b';
+            btnAccion.style.cursor = 'not-allowed';
+            btnAccion.onclick = (e) => { e.preventDefault(); }; // Evita clics
+        } else {
+            btnAccion.innerHTML = '<i class="fas fa-cart-plus"></i> Agregar al Carrito';
+            btnAccion.style.background = 'var(--secondary-brand)'; 
             
-            document.getElementById('cartSidebar').classList.add('active');
-            document.getElementById('cartOverlay').classList.add('active');
-        };
+            btnAccion.onclick = () => {
+                carrito.push({ 
+                    id: data.id, 
+                    titulo: data.titulo, 
+                    precio: precioMostrar, 
+                    imagen: imagenUrl,
+                    precioOriginal: esOfertaValida ? data.precio : null 
+                });
+                localStorage.setItem('dycrea_carrito', JSON.stringify(carrito));
+                actualizarIconoCarrito();
+                renderizarCarrito();
+                
+                document.getElementById('cartSidebar').classList.add('active');
+                document.getElementById('cartOverlay').classList.add('active');
+            };
+        }
 
         // Mostrar la página una vez que todo cargó
         document.getElementById('loading-spinner').style.display = 'none';
