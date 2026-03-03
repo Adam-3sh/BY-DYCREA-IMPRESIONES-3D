@@ -15,8 +15,9 @@ function actualizarIconoCarrito() {
     badges.forEach(badge => badge.textContent = carrito.length);
 }
 
-function agregarAlCarrito(id, titulo, precio, imagen) {
-    carrito.push({ id, titulo, precio, imagen });
+function agregarAlCarrito(id, titulo, precio, imagen, precioOriginal = null) {
+    // Ahora guardamos también el precio original en la memoria
+    carrito.push({ id, titulo, precio, imagen, precioOriginal });
     localStorage.setItem('dycrea_carrito', JSON.stringify(carrito));
     actualizarIconoCarrito();
     renderizarCarrito();
@@ -35,6 +36,8 @@ function eliminarDelCarrito(index) {
 function renderizarCarrito() {
     const container = document.getElementById('cartItemsContainer');
     const priceText = document.getElementById('cartTotalPrice');
+    if(!container) return; 
+    
     container.innerHTML = '';
     let total = 0;
 
@@ -46,13 +49,27 @@ function renderizarCarrito() {
 
     carrito.forEach((item, index) => {
         total += item.precio;
+        
+        // --- MAGIA: Calcular diseño de oferta para el carrito ---
+        let precioInfo = `<div class="cart-item-price">$${item.precio.toLocaleString('es-CL')}</div>`;
+        if (item.precioOriginal && item.precioOriginal > item.precio) {
+            let ahorro = item.precioOriginal - item.precio;
+            precioInfo = `
+                <div class="cart-item-price" style="display: flex; flex-direction: column; line-height: 1.2; margin-top: 5px;">
+                    <span style="text-decoration: line-through; color: #a0aec0; font-size: 0.8rem; font-weight: 500;">$${item.precioOriginal.toLocaleString('es-CL')}</span>
+                    <span style="color: var(--danger); font-size: 1.1rem;">$${item.precio.toLocaleString('es-CL')}</span>
+                    <span style="color: #27ae60; font-size: 0.75rem; font-weight: 700;">¡Ahorras $${ahorro.toLocaleString('es-CL')}!</span>
+                </div>
+            `;
+        }
+
         const div = document.createElement('div');
         div.className = 'cart-item';
         div.innerHTML = `
             <img src="${item.imagen}" alt="${item.titulo}">
             <div class="cart-item-info">
                 <div class="cart-item-title">${item.titulo}</div>
-                <div class="cart-item-price">$${item.precio.toLocaleString('es-CL')}</div>
+                ${precioInfo}
                 <button class="btn-remove-item" onclick="eliminarDelCarrito(${index})"><i class="fas fa-trash"></i> Quitar</button>
             </div>
         `;
@@ -185,7 +202,7 @@ function renderizarProductos(lista) {
                     <img src="${imagenPrincipal}" alt="${prod.titulo}" class="product-image ${tieneMultiples ? 'auto-slider' : ''}" data-images="${dataImagesStr}" data-index="0">
                 </a>
                 <div class="quick-action-overlay">
-                    <button class="btn-add-cart" onclick="agregarAlCarrito('${prod.id}', '${prod.titulo.replace(/'/g, "")}', ${precioMostrar}, '${imagenPrincipal}')" style="background: var(--secondary-brand); color: white;">
+                    <button class="btn-add-cart" onclick="agregarAlCarrito('${prod.id}', '${prod.titulo.replace(/'/g, "")}', ${precioMostrar}, '${imagenPrincipal}', ${esOfertaValida ? prod.precio : null})" style="background: var(--secondary-brand); color: white;">
                         <i class="fas fa-cart-plus"></i> Al Carrito
                     </button>
                 </div>

@@ -29,13 +29,27 @@ function renderizarCarrito() {
 
     carrito.forEach((item, index) => {
         total += item.precio;
+        
+        // --- MAGIA: Calcular diseño de oferta para el carrito ---
+        let precioInfo = `<div class="cart-item-price">$${item.precio.toLocaleString('es-CL')}</div>`;
+        if (item.precioOriginal && item.precioOriginal > item.precio) {
+            let ahorro = item.precioOriginal - item.precio;
+            precioInfo = `
+                <div class="cart-item-price" style="display: flex; flex-direction: column; line-height: 1.2; margin-top: 5px;">
+                    <span style="text-decoration: line-through; color: #a0aec0; font-size: 0.8rem; font-weight: 500;">$${item.precioOriginal.toLocaleString('es-CL')}</span>
+                    <span style="color: var(--danger); font-size: 1.1rem;">$${item.precio.toLocaleString('es-CL')}</span>
+                    <span style="color: #27ae60; font-size: 0.75rem; font-weight: 700;">¡Ahorras $${ahorro.toLocaleString('es-CL')}!</span>
+                </div>
+            `;
+        }
+
         const div = document.createElement('div');
         div.className = 'cart-item';
         div.innerHTML = `
             <img src="${item.imagen}" alt="${item.titulo}">
             <div class="cart-item-info">
                 <div class="cart-item-title">${item.titulo}</div>
-                <div class="cart-item-price">$${item.precio.toLocaleString('es-CL')}</div>
+                ${precioInfo}
                 <button class="btn-remove-item" onclick="eliminarDelCarrito(${index})"><i class="fas fa-trash"></i> Quitar</button>
             </div>
         `;
@@ -179,7 +193,13 @@ async function cargarDetalleProducto() {
         
         // Al hacer clic, enviamos el precio con oferta (si la hay)
         btnAccion.onclick = () => {
-            carrito.push({ id: data.id, titulo: data.titulo, precio: precioMostrar, imagen: imagenUrl });
+            carrito.push({ 
+                id: data.id, 
+                titulo: data.titulo, 
+                precio: precioMostrar, 
+                imagen: imagenUrl,
+                precioOriginal: esOfertaValida ? data.precio : null // Guardamos el precio antiguo
+            });
             localStorage.setItem('dycrea_carrito', JSON.stringify(carrito));
             actualizarIconoCarrito();
             renderizarCarrito();
