@@ -101,10 +101,18 @@
                 <span>Total Estimado:</span>
                 <span id="cartTotalPrice">$0</span>
             </div>
+            
             <div style="margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px;">
-                <input type="text" id="cart-nombre" placeholder="Tu Nombre y Apellido" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; width: 100%; outline: none;" required>
-                <input type="tel" id="cart-telefono" placeholder="Tu WhatsApp (Ej: +569...)" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; width: 100%; outline: none;" required>
+                <input type="text" id="cart-nombre" placeholder="Tu Nombre y Apellido" maxlength="40" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; width: 100%; outline: none;" required>
+                
+                <div style="display: flex; gap: 8px;">
+                    <div style="padding: 12px 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-weight: 600; color: #475569; display: flex; align-items: center; user-select: none;">
+                        +56 9
+                    </div>
+                    <input type="tel" id="cart-telefono" placeholder="1234 5678" maxlength="8" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; width: 100%; outline: none;" required>
+                </div>
             </div>
+
             <button class="btn-checkout" onclick="procesarCompra()">
                 <i class="fab fa-whatsapp"></i> Enviar a Cotizar
             </button>

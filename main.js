@@ -79,25 +79,33 @@ function renderizarCarrito() {
 }
 
 // === PROCESAR COMPRA (CORREO SILENCIOSO + WHATSAPP) ===
+// === PROCESAR COMPRA (CORREO SILENCIOSO + WHATSAPP) ===
 async function procesarCompra() {
     if(carrito.length === 0) return alert("El carrito está vacío.");
     
-    // 1. Capturar datos del cliente
+    // 1. Capturar y Validar datos del cliente
     const nombre = document.getElementById('cart-nombre').value.trim();
-    const telefono = document.getElementById('cart-telefono').value.trim();
+    const telefonoInput = document.getElementById('cart-telefono').value.trim();
 
-    if(!nombre || !telefono) {
-        return alert("Por favor, ingresa tu nombre y número de WhatsApp para poder contactarte.");
+    // Validaciones básicas
+    if(!nombre || nombre.length < 3) {
+        return alert("Por favor, ingresa un nombre válido (mínimo 3 letras).");
     }
+    if(telefonoInput.length !== 8) {
+        return alert("El número de teléfono debe tener exactamente 8 dígitos. (Ej: 12345678)");
+    }
+
+    // Armamos el teléfono completo de forma automática
+    const telefonoCompleto = "+569" + telefonoInput;
 
     // 2. Cambiar botón a estado de carga
     const btn = document.querySelector('.btn-checkout');
     const textoOriginal = btn.innerHTML;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
     btn.disabled = true;
-    btn.style.background = "#94a3b8"; // Color gris mientras carga
+    btn.style.background = "#94a3b8"; 
 
-    const numeroTelefonico = "56974139790"; // TU NÚMERO
+    const numeroStore = "56974139790"; // TU NÚMERO
     let mensajeWP = `*¡Hola! Soy ${nombre} y vengo de dycrea.cl para confirmar mi pedido:*\n\n`;
     let detalleCorreo = ``;
     let total = 0;
@@ -114,11 +122,11 @@ async function procesarCompra() {
     // 3. ENVIAR CORREO SILENCIOSO DE RESPALDO A DYCREA
     try {
         await emailjs.send(
-            "service_ao0l06w",   // ¡REEMPLAZA ESTO!
-            "template_zgoy0jh",  // ¡REEMPLAZA ESTO!
+            "TU_SERVICE_ID",   // ¡RECUERDA REEMPLAZAR ESTO!
+            "TU_TEMPLATE_ID",  // ¡RECUERDA REEMPLAZAR ESTO!
             {
                 nombre_cliente: nombre,
-                telefono_cliente: telefono,
+                telefono_cliente: telefonoCompleto,
                 total_carrito: `$${total.toLocaleString('es-CL')}`,
                 detalle_carrito: detalleCorreo
             }
@@ -131,10 +139,10 @@ async function procesarCompra() {
     // 4. ABRIR WHATSAPP Y RESTAURAR BOTÓN
     btn.innerHTML = textoOriginal;
     btn.disabled = false;
-    btn.style.background = "#25D366"; // Volver a verde
+    btn.style.background = "#25D366"; 
     
-    // Abrir WhatsApp
-    const url = `https://api.whatsapp.com/send?phone=${numeroTelefonico}&text=${encodeURIComponent(mensajeWP)}`;
+    // Abrir WhatsApp al número de la tienda
+    const url = `https://api.whatsapp.com/send?phone=${numeroStore}&text=${encodeURIComponent(mensajeWP)}`;
     window.open(url, '_blank');
 }
 
