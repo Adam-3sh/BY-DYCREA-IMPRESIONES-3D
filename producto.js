@@ -109,8 +109,8 @@ async function procesarCompra() {
     // 3. ENVIAR CORREO SILENCIOSO DE RESPALDO
     try {
         await emailjs.send(
-            "TU_SERVICE_ID",   // ¡RECUERDA REEMPLAZAR ESTO CUANDO TENGAS EMAILJS!
-            "TU_TEMPLATE_ID",  // ¡RECUERDA REEMPLAZAR ESTO CUANDO TENGAS EMAILJS!
+            "service_ao0l06w",   // ¡RECUERDA REEMPLAZAR ESTO CUANDO TENGAS EMAILJS!
+            "template_zgoy0jh",  // ¡RECUERDA REEMPLAZAR ESTO CUANDO TENGAS EMAILJS!
             {
                 nombre_cliente: nombre,
                 telefono_cliente: telefonoCompleto,
