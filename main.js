@@ -122,8 +122,8 @@ async function procesarCompra() {
     // 3. ENVIAR CORREO SILENCIOSO DE RESPALDO A DYCREA
     try {
         await emailjs.send(
-            "TU_SERVICE_ID",   // ¡RECUERDA REEMPLAZAR ESTO!
-            "TU_TEMPLATE_ID",  // ¡RECUERDA REEMPLAZAR ESTO!
+            "service_ao0l06w",   // ¡RECUERDA REEMPLAZAR ESTO!
+            "template_zgoy0jh",  // ¡RECUERDA REEMPLAZAR ESTO!
             {
                 nombre_cliente: nombre,
                 telefono_cliente: telefonoCompleto,
