@@ -65,8 +65,14 @@ function eliminarDelCarrito(index) {
     renderizarCarrito();
 }
 
-// === PROCESAR COMPRA (CORREO SILENCIOSO + WHATSAPP) ===
-// === PROCESAR COMPRA (CORREO SILENCIOSO + WHATSAPP) ===
+// === PROCESAR COMPRA Y CERRAR CARRITO ===
+window.cerrarYResetearCarrito = function() {
+    document.getElementById('cartSidebar').classList.remove('active');
+    document.getElementById('cartOverlay').classList.remove('active');
+    // Esperamos 300ms a que termine la animación de cierre para limpiar la vista
+    setTimeout(() => renderizarCarrito(), 300); 
+};
+
 async function procesarCompra() {
     if(carrito.length === 0) return alert("El carrito está vacío.");
     
@@ -74,15 +80,9 @@ async function procesarCompra() {
     const nombre = document.getElementById('cart-nombre').value.trim();
     const telefonoInput = document.getElementById('cart-telefono').value.trim();
 
-    // Validaciones básicas
-    if(!nombre || nombre.length < 3) {
-        return alert("Por favor, ingresa un nombre válido (mínimo 3 letras).");
-    }
-    if(telefonoInput.length !== 8) {
-        return alert("El número de teléfono debe tener exactamente 8 dígitos. (Ej: 12345678)");
-    }
+    if(!nombre || nombre.length < 3) return alert("Por favor, ingresa un nombre válido (mínimo 3 letras).");
+    if(telefonoInput.length !== 8) return alert("El número de teléfono debe tener exactamente 8 dígitos. (Ej: 12345678)");
 
-    // Armamos el teléfono completo de forma automática
     const telefonoCompleto = "+569" + telefonoInput;
 
     // 2. Cambiar botón a estado de carga
@@ -106,11 +106,11 @@ async function procesarCompra() {
     mensajeWP += `\n*Total Estimado: $${total.toLocaleString('es-CL')}*`;
     mensajeWP += `\n\nPor favor, envíame los datos bancarios para realizar la transferencia y adjuntar el comprobante. 🧾`;
 
-    // 3. ENVIAR CORREO SILENCIOSO DE RESPALDO A DYCREA
+    // 3. ENVIAR CORREO SILENCIOSO DE RESPALDO
     try {
         await emailjs.send(
-            "service_ao0l06w",   // ¡RECUERDA REEMPLAZAR ESTO!
-            "template_zgoy0jh",  // ¡RECUERDA REEMPLAZAR ESTO!
+            "TU_SERVICE_ID",   // ¡RECUERDA REEMPLAZAR ESTO CUANDO TENGAS EMAILJS!
+            "TU_TEMPLATE_ID",  // ¡RECUERDA REEMPLAZAR ESTO CUANDO TENGAS EMAILJS!
             {
                 nombre_cliente: nombre,
                 telefono_cliente: telefonoCompleto,
@@ -118,20 +118,50 @@ async function procesarCompra() {
                 detalle_carrito: detalleCorreo
             }
         );
-        console.log("Respaldo enviado a dycrea exitosamente.");
-    } catch (error) {
-        console.log("Error silencioso (no detener compra):", error);
-    }
+    } catch (error) { console.log("Error silencioso:", error); }
 
-    // 4. ABRIR WHATSAPP Y RESTAURAR BOTÓN
+    // 4. ABRIR WHATSAPP
+    const url = `https://api.whatsapp.com/send?phone=${numeroStore}&text=${encodeURIComponent(mensajeWP)}`;
+    window.open(url, '_blank');
+
+    // 5. VACIAR CARRITO Y MOSTRAR CONFIRMACIÓN VISUAL EN EL PANEL
+    carrito = [];
+    localStorage.removeItem('dycrea_carrito');
+    actualizarIconoCarrito();
+    
+    document.getElementById('cartItemsContainer').innerHTML = `
+        <div style="text-align: center; padding: 40px 20px; animation: fadeInPage 0.4s;">
+            <i class="fas fa-check-circle" style="font-size: 4.5rem; color: #25D366; margin-bottom: 20px;"></i>
+            <h3 style="color: var(--secondary-brand); font-size: 1.5rem; margin-bottom: 15px;">¡Listo, ${nombre}!</h3>
+            <p style="color: var(--text-body); font-size: 0.95rem; margin-bottom: 25px; line-height: 1.6;">
+                Tu cotización fue generada y hemos abierto WhatsApp.<br><br>
+                <strong style="color: var(--danger);">¡IMPORTANTE!</strong> No olvides presionar <strong>"Enviar"</strong> en tu chat para que nos llegue el mensaje.
+            </p>
+            <button onclick="cerrarYResetearCarrito()" style="background: #f8fafc; color: var(--text-dark); padding: 12px 20px; border: 2px solid #e2e8f0; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; transition: 0.3s;">
+                Entendido, cerrar
+            </button>
+        </div>
+    `;
+    
+    // Limpiamos los campos e importes para la próxima compra
+    document.getElementById('cartTotalPrice').textContent = '$0';
+    document.getElementById('cart-nombre').value = '';
+    document.getElementById('cart-telefono').value = '';
+    
     btn.innerHTML = textoOriginal;
     btn.disabled = false;
     btn.style.background = "#25D366"; 
-    
-    // Abrir WhatsApp al número de la tienda
-    const url = `https://api.whatsapp.com/send?phone=${numeroStore}&text=${encodeURIComponent(mensajeWP)}`;
-    window.open(url, '_blank');
 }
+
+// === Eventos universales para abrir/cerrar carrito ===
+document.querySelectorAll('.cart-btn, #openCartBtnProd').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.getElementById('cartSidebar').classList.add('active');
+        document.getElementById('cartOverlay').classList.add('active');
+    });
+});
+document.getElementById('closeCartBtn')?.addEventListener('click', cerrarYResetearCarrito);
+document.getElementById('cartOverlay')?.addEventListener('click', cerrarYResetearCarrito);
 
 // Eventos del Carrito en UI
 document.getElementById('openCartBtnProd')?.addEventListener('click', () => {
