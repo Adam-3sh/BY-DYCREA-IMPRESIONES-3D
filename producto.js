@@ -65,23 +65,63 @@ function eliminarDelCarrito(index) {
     renderizarCarrito();
 }
 
-// === ENVIAR CARRITO POR WHATSAPP ===
-function enviarCarritoWhatsApp() {
+// === PROCESAR COMPRA (CORREO SILENCIOSO + WHATSAPP) ===
+async function procesarCompra() {
     if(carrito.length === 0) return alert("El carrito está vacío.");
     
+    // 1. Capturar datos del cliente
+    const nombre = document.getElementById('cart-nombre').value.trim();
+    const telefono = document.getElementById('cart-telefono').value.trim();
+
+    if(!nombre || !telefono) {
+        return alert("Por favor, ingresa tu nombre y número de WhatsApp para poder contactarte.");
+    }
+
+    // 2. Cambiar botón a estado de carga
+    const btn = document.querySelector('.btn-checkout');
+    const textoOriginal = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+    btn.disabled = true;
+    btn.style.background = "#94a3b8"; // Color gris mientras carga
+
     const numeroTelefonico = "56974139790"; // TU NÚMERO
-    let mensaje = `*¡Hola! Vengo de dycrea.cl y quiero confirmar el siguiente pedido:*\n\n`;
+    let mensajeWP = `*¡Hola! Soy ${nombre} y vengo de dycrea.cl para confirmar mi pedido:*\n\n`;
+    let detalleCorreo = ``;
     let total = 0;
 
     carrito.forEach((item, i) => {
-        mensaje += `${i+1}. ${item.titulo} - $${item.precio.toLocaleString('es-CL')}\n`;
+        mensajeWP += `${i+1}. ${item.titulo} - $${item.precio.toLocaleString('es-CL')}\n`;
+        detalleCorreo += `${i+1}. ${item.titulo} - $${item.precio.toLocaleString('es-CL')}\n`;
         total += item.precio;
     });
 
-    mensaje += `\n*Total Estimado: $${total.toLocaleString('es-CL')}*`;
-    mensaje += `\n\nPor favor, envíame los datos bancarios para realizar la transferencia y adjuntar el comprobante. 🧾`;
+    mensajeWP += `\n*Total Estimado: $${total.toLocaleString('es-CL')}*`;
+    mensajeWP += `\n\nPor favor, envíame los datos bancarios para realizar la transferencia y adjuntar el comprobante. 🧾`;
 
-    const url = `https://api.whatsapp.com/send?phone=${numeroTelefonico}&text=${encodeURIComponent(mensaje)}`;
+    // 3. ENVIAR CORREO SILENCIOSO DE RESPALDO A DYCREA
+    try {
+        await emailjs.send(
+            "service_ao0l06w",   // ¡REEMPLAZA ESTO!
+            "template_zgoy0jh",  // ¡REEMPLAZA ESTO!
+            {
+                nombre_cliente: nombre,
+                telefono_cliente: telefono,
+                total_carrito: `$${total.toLocaleString('es-CL')}`,
+                detalle_carrito: detalleCorreo
+            }
+        );
+        console.log("Respaldo enviado a dycrea exitosamente.");
+    } catch (error) {
+        console.log("Error silencioso (no detener compra):", error);
+    }
+
+    // 4. ABRIR WHATSAPP Y RESTAURAR BOTÓN
+    btn.innerHTML = textoOriginal;
+    btn.disabled = false;
+    btn.style.background = "#25D366"; // Volver a verde
+    
+    // Abrir WhatsApp
+    const url = `https://api.whatsapp.com/send?phone=${numeroTelefonico}&text=${encodeURIComponent(mensajeWP)}`;
     window.open(url, '_blank');
 }
 

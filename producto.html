@@ -110,7 +110,11 @@
                 <span>Total Estimado:</span>
                 <span id="cartTotalPrice">$0</span>
             </div>
-            <button class="btn-checkout" onclick="enviarCarritoWhatsApp()">
+            <div style="margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px;">
+                <input type="text" id="cart-nombre" placeholder="Tu Nombre y Apellido" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; width: 100%; outline: none;" required>
+                <input type="tel" id="cart-telefono" placeholder="Tu WhatsApp (Ej: +569...)" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; width: 100%; outline: none;" required>
+            </div>
+            <button class="btn-checkout" onclick="procesarCompra()">
                 <i class="fab fa-whatsapp"></i> Enviar a Cotizar
             </button>
         </div>
@@ -133,5 +137,13 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="producto.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+      (function(){
+         emailjs.init({ publicKey: "2erp87nPYJtwIfXWc" }); // ¡REEMPLAZA ESTO!
+      })();
+    </script>
+
 </body>
 </html>
