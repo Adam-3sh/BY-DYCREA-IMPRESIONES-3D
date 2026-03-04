@@ -112,14 +112,16 @@
             </div>
             
             <div style="margin-bottom: 15px; display: flex; flex-direction: column; gap: 10px;">
-                <input type="text" id="cart-nombre" placeholder="Tu Nombre y Apellido" maxlength="40" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; width: 100%; outline: none;" required>
                 
-                <div style="display: flex; gap: 8px;">
-                    <div style="padding: 12px 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-weight: 600; color: #475569; display: flex; align-items: center; user-select: none;">
+                <input type="text" id="cart-nombre" placeholder="Tu Nombre y Apellido" maxlength="40" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; width: 100%; box-sizing: border-box; outline: none;" required>
+                
+                <div style="position: relative; width: 100%;">
+                    <div style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-weight: 600; color: #64748b; user-select: none; border-right: 2px solid #e2e8f0; padding-right: 10px;">
                         +56 9
                     </div>
-                    <input type="tel" id="cart-telefono" placeholder="1234 5678" maxlength="8" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; width: 100%; outline: none;" required>
+                    <input type="tel" id="cart-telefono" placeholder="1234 5678" maxlength="8" oninput="this.value = this.value.replace(/[^0-9]/g, '')" style="padding: 12px 12px 12px 78px; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; width: 100%; box-sizing: border-box; outline: none;" required>
                 </div>
+
             </div>
 
             <button class="btn-checkout" onclick="procesarCompra()">
