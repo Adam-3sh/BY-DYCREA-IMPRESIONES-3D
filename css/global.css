@@ -218,6 +218,9 @@ button:active, .icon-btn:active, .product-card:active {
         top: -6px;
         right: -10px;
     }
+    .footer-logo {
+        align-self: center;
+    }
     
     /* Le damos espacio al footer para que el menú no lo tape */
     .ecommerce-footer {
