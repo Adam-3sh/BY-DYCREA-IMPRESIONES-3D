@@ -47,43 +47,38 @@
 
                         <div class="input-group">
                             <label>Categoría *</label>
-                            <div style="display: flex; gap: 10px;">
-                                <select id="categoria" required style="flex: 1;">
-                                    <option value="">Cargando categorías...</option>
-                                </select>
-                                <button type="button" id="btn-add-cat" style="background: var(--primary-accent); border: none; border-radius: 8px; padding: 0 15px; cursor: pointer; color: var(--secondary-brand); font-weight: bold; font-size: 1.2rem;" title="Añadir Categoría">+</button>
-                                <button type="button" id="btn-del-cat" style="background: var(--danger); color: white; border: none; border-radius: 8px; padding: 0 15px; cursor: pointer; font-weight: bold; font-size: 1.2rem;" title="Eliminar Categoría">-</button>
+                            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                <button type="button" id="btn-add-cat" class="btn-publicar" style="padding: 5px 15px;">+ Añadir Categoría</button>
+                                <button type="button" id="btn-del-cat" class="btn-publicar" style="background: var(--danger); padding: 5px 15px;">- Eliminar Categoría</button>
                             </div>
+                            <select id="categoria" required style="width: 100%;">
+                                <option value="">Cargando categorías...</option>
+                            </select>
                         </div>
 
-                        <div class="input-group">
+                        <div class="input-group" style="display: flex; flex-direction: column;">
                             <label>Precio (CLP) *</label>
-                            <input type="number" id="precio" required placeholder="Ej: 15000">
+                            <input type="number" id="precio" required placeholder="Ej: 15000" style="margin-top: auto;">
                         </div>
 
                         <div class="input-group full-width">
                             <label>Material(es) de Impresión *</label>
-                            <div class="checkbox-grid">
-                                <label class="custom-checkbox"><input type="checkbox" name="material" value="PLA+" checked> <span class="checkmark"></span> PLA+</label>
-                                <label class="custom-checkbox"><input type="checkbox" name="material" value="PETG"> <span class="checkmark"></span> PETG</label>
-                                <label class="custom-checkbox"><input type="checkbox" name="material" value="Resina SLA"> <span class="checkmark"></span> Resina SLA</label>
-                                <label class="custom-checkbox"><input type="checkbox" name="material" value="ABS"> <span class="checkmark"></span> ABS</label>
-                                <label class="custom-checkbox"><input type="checkbox" name="material" value="TPU (Flexible)"> <span class="checkmark"></span> TPU (Flexible)</label>
+                            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                <button type="button" id="btn-add-mat" class="btn-publicar" style="padding: 5px 15px;">+ Añadir Material</button>
+                                <button type="button" id="btn-del-mat" class="btn-publicar" style="background: var(--danger); padding: 5px 15px;">- Eliminar Selección</button>
                             </div>
+                            <div class="checkbox-grid" id="container-materiales">
+                                </div>
                         </div>
 
                         <div class="input-group full-width">
-                            <label>Colores Disponibles (Selecciona varios) *</label>
-                            <div class="checkbox-grid color-grid">
-                                <label class="custom-checkbox"><input type="checkbox" name="color" value="Blanco"> <span class="checkmark"></span> Blanco</label>
-                                <label class="custom-checkbox"><input type="checkbox" name="color" value="Negro"> <span class="checkmark"></span> Negro</label>
-                                <label class="custom-checkbox"><input type="checkbox" name="color" value="Gris"> <span class="checkmark"></span> Gris</label>
-                                <label class="custom-checkbox"><input type="checkbox" name="color" value="Rojo"> <span class="checkmark"></span> Rojo</label>
-                                <label class="custom-checkbox"><input type="checkbox" name="color" value="Azul"> <span class="checkmark"></span> Azul</label>
-                                <label class="custom-checkbox"><input type="checkbox" name="color" value="Verde"> <span class="checkmark"></span> Verde</label>
-                                <label class="custom-checkbox"><input type="checkbox" name="color" value="Dorado/Seda"> <span class="checkmark"></span> Dorado/Seda</label>
-                                <label class="custom-checkbox"><input type="checkbox" name="color" value="Pintado a Mano"> <span class="checkmark"></span> Pintado a Mano</label>
+                            <label>Colores Disponibles *</label>
+                            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                                <button type="button" id="btn-add-col" class="btn-publicar" style="padding: 5px 15px;">+ Añadir Color</button>
+                                <button type="button" id="btn-del-col" class="btn-publicar" style="background: var(--danger); padding: 5px 15px;">- Eliminar Selección</button>
                             </div>
+                            <div class="checkbox-grid color-grid" id="container-colores">
+                                </div>
                         </div>
 
                         <div class="input-group">

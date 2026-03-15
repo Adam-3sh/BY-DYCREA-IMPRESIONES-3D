@@ -430,5 +430,99 @@ document.getElementById('form-editar-producto')?.addEventListener('submit', asyn
     } catch(err) { alert('Error: ' + err.message); }
 });
 
+
+async function cargarMaterialesAdmin() {
+    const container = document.getElementById('container-materiales');
+    try {
+        const { data, error } = await supabaseClient.from('materiales').select('nombre').order('nombre');
+        if (error) throw error;
+        container.innerHTML = '';
+        data.forEach(mat => {
+            container.innerHTML += `
+                <label class="custom-checkbox">
+                    <input type="checkbox" name="material" value="${mat.nombre}"> 
+                    <span class="checkmark"></span> ${mat.nombre}
+                </label>`;
+        });
+    } catch (err) { console.error("Error cargando materiales:", err); }
+}
+
+async function cargarColoresAdmin() {
+    const container = document.getElementById('container-colores');
+    try {
+        const { data, error } = await supabaseClient.from('colores').select('nombre').order('nombre');
+        if (error) throw error;
+        container.innerHTML = '';
+        data.forEach(col => {
+            container.innerHTML += `
+                <label class="custom-checkbox">
+                    <input type="checkbox" name="color" value="${col.nombre}"> 
+                    <span class="checkmark"></span> ${col.nombre}
+                </label>`;
+        });
+    } catch (err) { console.error("Error cargando colores:", err); }
+}
+
+// Agregar Material
+document.getElementById('btn-add-mat').addEventListener('click', async () => {
+    const nuevo = prompt("Nombre del nuevo material (ej: Wood PLA):");
+    if (nuevo) {
+        await supabaseClient.from('materiales').insert([{ nombre: nuevo.trim() }]);
+        cargarMaterialesAdmin();
+    }
+});
+
+// Agregar Color
+document.getElementById('btn-add-col').addEventListener('click', async () => {
+    const nuevo = prompt("Nombre del nuevo color (ej: Purpurina):");
+    if (nuevo) {
+        await supabaseClient.from('colores').insert([{ nombre: nuevo.trim() }]);
+        cargarColoresAdmin();
+    }
+});
+
+
+// Eliminar Materiales seleccionados
+document.getElementById('btn-del-mat').addEventListener('click', async () => {
+    const seleccionados = Array.from(document.querySelectorAll('input[name="material"]:checked')).map(cb => cb.value);
+    if (seleccionados.length === 0) return alert("Selecciona los materiales que quieres borrar.");
+    
+    if (confirm(`¿Borrar permanentemente: ${seleccionados.join(', ')}?`)) {
+        await supabaseClient.from('materiales').delete().in('nombre', seleccionados);
+        cargarMaterialesAdmin();
+    }
+});
+
+// === ELIMINAR COLORES SELECCIONADOS ===
+document.getElementById('btn-del-col').addEventListener('click', async () => {
+    // 1. Obtenemos todos los colores que el usuario haya marcado con el "checkbox"
+    const seleccionados = Array.from(document.querySelectorAll('input[name="color"]:checked')).map(cb => cb.value);
+    
+    // 2. Si no marcó ninguno, le avisamos
+    if (seleccionados.length === 0) {
+        return alert("⚠️ Selecciona los colores que quieres borrar marcando su casilla.");
+    }
+    
+    // 3. Confirmación de seguridad
+    if (confirm(`¿Estás seguro de borrar permanentemente estos colores: ${seleccionados.join(', ')}?`)) {
+        try {
+            // 4. Borramos de la base de datos de Supabase
+            const { error } = await supabaseClient.from('colores').delete().in('nombre', seleccionados);
+            if (error) throw error;
+            
+            // 5. Avisamos del éxito y recargamos la lista
+            alert("✅ Colores eliminados correctamente.");
+            cargarColoresAdmin(); 
+            
+        } catch (err) {
+            console.error(err);
+            alert("❌ Ocurrió un error al eliminar los colores.");
+        }
+    }
+});
+
 // Inicializar lista
-cargarProductosAdmin();
+cargarCategoriasAdmin();
+cargarMaterialesAdmin();
+cargarColoresAdmin();
+
