@@ -525,4 +525,5 @@ document.getElementById('btn-del-col').addEventListener('click', async () => {
 cargarCategoriasAdmin();
 cargarMaterialesAdmin();
 cargarColoresAdmin();
+cargarProductosAdmin();
 
