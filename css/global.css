@@ -15,6 +15,23 @@ body { background-color: var(--bg-body); color: var(--text-body); line-height: 1
 a { text-decoration: none; color: inherit; }
 @keyframes fadeInPage { from { opacity: 0; } to { opacity: 1; } }
 
+/*borrame si se ve mal*/
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+body {
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: none; /* Evita el rebote excesivo al hacer scroll tope */
+}
+/* Efecto nativo al tocar botones */
+button, .icon-btn, .product-card {
+    transition: transform 0.1s ease-in-out, opacity 0.1s;
+}
+button:active, .icon-btn:active, .product-card:active {
+    transform: scale(0.96) !important; /* El botón se hunde un poquito al tocarlo */
+    opacity: 0.9;
+}
+
 /* =========================================
    2. HEADER Y TOP BAR
    ========================================= */
@@ -123,4 +140,87 @@ a { text-decoration: none; color: inherit; }
     .accordion-content { max-height: 0; overflow: hidden; transition: all 0.4s ease-in-out; padding: 0 15px; opacity: 0; }
     .accordion-item.activo .accordion-content { max-height: 400px; padding: 15px; opacity: 1; }
     .footer-bottom-container { flex-direction: column; gap: 15px; text-align: center; }
+
+    .cart-sidebar {
+        top: auto;
+        bottom: -100%;
+        right: 0 !important; /* Anulamos el right anterior */
+        width: 100%;
+        height: 85vh; /* Ocupa el 85% de la pantalla */
+        border-radius: 25px 25px 0 0; /* Bordes redondeados arriba */
+        transition: bottom 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.1) !important; /* Animación con rebote sutil */
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
+    }
+    .cart-sidebar.active {
+        bottom: 0;
+    }
+    .cart-header {
+        padding: 25px 20px 15px;
+        position: relative;
+    }
+    /* Pestaña gris arribita típica de las apps para indicar que se puede deslizar */
+    .cart-header::before {
+        content: '';
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 5px;
+        background: #e2e8f0;
+        border-radius: 10px;
+    }
+}
+
+.mobile-bottom-nav {
+    display: none; /* Oculto en PC */
+}
+
+@media (max-width: 768px) {
+    /* Ocultamos los iconos del header viejo para no duplicar */
+    .header-actions { display: none; }
+    
+    .mobile-bottom-nav {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: var(--bg-white);
+        box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+        padding: 12px 10px;
+        padding-bottom: env(safe-area-inset-bottom, 15px); /* Respeta la barra de inicio de iPhone */
+        z-index: 900;
+        border-top: 1px solid var(--border-light);
+    }
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        color: var(--text-light);
+        font-size: 0.7rem;
+        font-weight: 500;
+    }
+    .nav-item i {
+        font-size: 1.3rem;
+        transition: 0.3s;
+    }
+    .nav-item.active {
+        color: var(--primary-dark);
+    }
+    .nav-item.active i {
+        transform: translateY(-2px);
+    }
+    .mobile-badge {
+        top: -6px;
+        right: -10px;
+    }
+    
+    /* Le damos espacio al footer para que el menú no lo tape */
+    .ecommerce-footer {
+        padding-bottom: 80px !important;
+    }
 }
