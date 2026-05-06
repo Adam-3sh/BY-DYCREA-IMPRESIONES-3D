@@ -487,3 +487,28 @@ button:active, .icon-btn:active, .product-card:active {
     object-position: center;
     transition: opacity 0.2s ease-in-out;
 }
+
+/* =========================================
+   AGRANDAR LOGOS SOLO EN EL INICIO (EXTRA GRANDE)
+   ========================================= */
+
+/* Logo Header (Horizontal) */
+.ecommerce-header .brand img {
+    height: 130px !important; /* Aumentado a 160px para PC */
+}
+
+/* Logo Footer (Centrado) */
+.ecommerce-footer .footer-logo {
+    height: 200px !important; /* Aumentado a 200px para PC */
+}
+
+/* --- Ajustes proporcionales para Celulares (Móvil) --- */
+@media (max-width: 768px) {
+    .ecommerce-header .brand img {
+        height: 60px !important; /* Aumentado a 100px para móviles */
+    }
+    
+    .ecommerce-footer .footer-logo {
+        height: 130px !important; /* Aumentado a 130px para móviles */
+    }
+}
