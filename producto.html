@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalle del Producto | by dycrea</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/detalle.css">
@@ -23,7 +25,7 @@
     <header class="ecommerce-header">
         <div class="header-container">
             <div class="brand" onclick="window.location.href='index.html'">
-                <img src="logo bydecrea centrado.png" alt="Logo Dycrea"> 
+                <img src="img/logo-centrado.webp" alt="Logo Dycrea"> 
                 <h1>By Dycrea Impresiones 3D</h1>
             </div>
             <div class="header-actions">
@@ -48,7 +50,7 @@
             <div class="product-gallery-wrapper">
                 <div class="product-gallery">
                     <span id="detail-badge" class="badge category hide-mobile">Categoría</span>
-                    <img id="detail-image" src="" alt="Imagen Principal" class="main-detail-image">
+                    <img id="detail-image" src="" alt="Imagen Principal" class="main-detail-image" loading="lazy">
                 </div>
                 <div class="thumbnails-container" id="thumbnails-container"></div>
             </div>
@@ -150,7 +152,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="producto.js"></script>
+    <script src="js/producto.js"></script>
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script type="text/javascript">
