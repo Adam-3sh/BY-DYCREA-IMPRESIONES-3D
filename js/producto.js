@@ -92,7 +92,7 @@ async function procesarCompra() {
     btn.disabled = true;
     btn.style.background = "#94a3b8"; 
 
-    const numeroStore = "56974139790"; // TU NÚMERO
+    const numeroStore = "56944018617"; // TU NÚMERO
     let mensajeWP = `*¡Hola! Soy ${nombre} y vengo de dycrea.cl para confirmar mi pedido:*\n\n`;
     let detalleCorreo = ``;
     let total = 0;
@@ -109,8 +109,8 @@ async function procesarCompra() {
     // 3. ENVIAR CORREO SILENCIOSO DE RESPALDO
     try {
         await emailjs.send(
-            "service_ao0l06w",   // ¡RECUERDA REEMPLAZAR ESTO CUANDO TENGAS EMAILJS!
-            "template_zgoy0jh",  // ¡RECUERDA REEMPLAZAR ESTO CUANDO TENGAS EMAILJS!
+            "service_3qfabfd",   // ¡RECUERDA REEMPLAZAR ESTO CUANDO TENGAS EMAILJS!
+            "template_fso1jri",  // ¡RECUERDA REEMPLAZAR ESTO CUANDO TENGAS EMAILJS!
             {
                 nombre_cliente: nombre,
                 telefono_cliente: telefonoCompleto,
