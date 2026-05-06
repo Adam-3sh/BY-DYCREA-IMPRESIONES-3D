@@ -189,7 +189,10 @@ window.addEventListener('popstate', (e) => {
 });
 // === Eventos universales para abrir/cerrar carrito ===
 document.querySelectorAll('.cart-btn, #openCartBtnProd').forEach(btn => {
-    btn.addEventListener('click', abrirCarrito);
+    btn.addEventListener('click', (e) => {
+        e.preventDefault(); // Esto detiene el comportamiento por defecto del enlace
+        abrirCarrito();
+    });
 });
 document.getElementById('closeCartBtn')?.addEventListener('click', () => { history.back(); });
 document.getElementById('cartOverlay')?.addEventListener('click', () => { history.back(); });
