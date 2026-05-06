@@ -4,6 +4,30 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 
 const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+// === COMPRIMIR IMAGEN ANTES DE SUBIR ===
+function comprimirImagen(file, maxPx, quality) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                let w = img.width, h = img.height;
+                if (w > maxPx || h > maxPx) {
+                    if (w > h) { h = Math.round(h * maxPx / w); w = maxPx; }
+                    else       { w = Math.round(w * maxPx / h); h = maxPx; }
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                canvas.toBlob(resolve, 'image/webp', quality);
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+
 // === 🔒 BARRERA DE SEGURIDAD (CANDADO) ===
 async function verificarSesion() {
     const { data: { session } } = await supabaseClient.auth.getSession();
@@ -220,14 +244,16 @@ if(formBanner) {
         msjBanner.textContent = '';
 
         try {
-            const archivo = inputImagenBanner.files[0];
-            if (!archivo) throw new Error("Debes seleccionar una imagen.");
+            const archivoOriginal = inputImagenBanner.files[0];
+            if (!archivoOriginal) throw new Error("Debes seleccionar una imagen.");
 
-            const extension = archivo.name.split('.').pop();
-            const nombreUnico = `banner_${Date.now()}.${extension}`;
+            // Comprimir imagen antes de subir (máx. 1400px, calidad 85%)
+            const archivo = await comprimirImagen(archivoOriginal, 1400, 0.85);
+
+            const nombreUnico = `banner_${Date.now()}.webp`;
 
             // Subir imagen a storage
-            const { error: uploadError } = await supabaseClient.storage.from('imagenes').upload(nombreUnico, archivo);
+            const { error: uploadError } = await supabaseClient.storage.from('imagenes').upload(nombreUnico, archivo, { contentType: 'image/webp' });
             if (uploadError) throw new Error('Error al subir imagen: ' + uploadError.message);
 
             // Obtener URL
@@ -260,6 +286,7 @@ if(formBanner) {
             msjBanner.innerHTML = '<i class="fas fa-check-circle"></i> ¡Cartel publicado con éxito!';
             formBanner.reset();
             textBannerFile.textContent = "Ningún archivo seleccionado";
+            cargarBannersAdmin(); // Actualizar lista sin recargar
 
         } catch (error) {
             console.error(error);

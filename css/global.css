@@ -227,3 +227,91 @@ button:active, .icon-btn:active, .product-card:active {
         padding-bottom: 80px !important;
     }
 }
+/* =========================================
+   MEJORAS MÓVIL — BÚSQUEDA Y CARRITO
+   ========================================= */
+
+/* Buscador: lupa más cómoda en móvil */
+@media (max-width: 768px) {
+    .header-search {
+        padding: 6px 6px 6px 10px;
+    }
+    .header-search input {
+        padding: 10px 10px;
+        font-size: 1rem;
+    }
+    .search-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 1.05rem;
+        flex-shrink: 0;
+    }
+
+    /* Cerrar carrito: área de toque más grande */
+    .close-cart {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        border-radius: 50%;
+        background: #f1f5f9;
+        color: var(--text-dark);
+    }
+    .close-cart:hover, .close-cart:active {
+        background: #fee2e2;
+        color: var(--danger);
+    }
+}
+
+/* =========================================
+   BOTÓN COLAPSAR BANNER
+   ========================================= */
+.banner-toggle-wrap {
+    display: flex;
+    justify-content: center;
+    height: 0;          /* No ocupa espacio vertical */
+    position: relative;
+    z-index: 20;
+}
+#btnCollapseBanner {
+    position: relative;
+    top: -18px;         /* Sobresale hacia arriba, encima del borde del banner */
+    background: var(--bg-white);
+    color: var(--text-light);
+    border: 1px solid var(--border-light);
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: color 0.2s, transform 0.35s ease;
+}
+#btnCollapseBanner:hover {
+    color: var(--primary-dark);
+    border-color: var(--primary-accent);
+}
+#btnCollapseBanner.colapsado i {
+    transform: rotate(180deg);
+}
+
+/* =========================================
+   FOOTER SIMPLIFICADO — 3 COLUMNAS
+   ========================================= */
+@media (min-width: 769px) {
+    .footer-container {
+        grid-template-columns: 1.6fr 1fr 1fr;
+    }
+}
+
+/* =========================================
+   PRODUCT CARD — CURSOR COMPLETO
+   ========================================= */
+.product-card .image-container img {
+    cursor: pointer;
+}

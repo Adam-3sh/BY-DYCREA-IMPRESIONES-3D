@@ -54,6 +54,11 @@
             </div>
         </div>
     </section>
+    <div class="banner-toggle-wrap">
+        <button id="btnCollapseBanner" title="Ocultar banner" aria-label="Ocultar banner">
+            <i class="fas fa-chevron-up"></i>
+        </button>
+    </div>
 
     <main class="main-content">
         <button id="btnToggleFiltros" class="btn-filtros-mobile">
@@ -133,42 +138,27 @@
         <div class="footer-container">
             <div class="footer-column brand-column">
                 <img src="img/logo-centrado.webp" alt="Logo Dycrea" class="footer-logo">
+                <p style="color:#cbd5e1; font-size:0.85rem; line-height:1.5; max-width:200px;">Impresiones 3D en Santiago de Chile. Figuras coleccionables, repuestos técnicos y más.</p>
                 <div class="social-icons">
-                    <a href="https://www.instagram.com/by_dycrea_impesiones3d?igsh=MWJtb2RqMWR4dDlldw==" target="_blank"><i class="fab fa-instagram"></i></a>
-                    <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.tiktok.com/@by.dycrea.3d?_r=1&_t=ZS-94OZaruPP8c" target="_blank"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://www.instagram.com/by_dycrea_impesiones3d?igsh=MWJtb2RqMWR4dDlldw==" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/@by.dycrea.3d?_r=1&_t=ZS-94OZaruPP8c" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
                 </div>
             </div>
 
             <div class="footer-column accordion-item">
                 <h4 class="accordion-header">
-                    NAVEGACIÓN <i class="fas fa-chevron-down hide-desktop"></i>
+                    ACCESO RÁPIDO <i class="fas fa-chevron-down hide-desktop"></i>
                 </h4>
                 <ul class="accordion-content">
                     <li><a href="index.html">Inicio</a></li>
-                    <li><a href="#">Catálogo Completo</a></li>
-                    <li><a href="#">Figuras Coleccionables</a></li>
-                    <li><a href="#">Repuestos Técnicos</a></li>
-                    <li><a href="#">Cotizar Diseño</a></li>
+                    <li><a href="#" onclick="event.preventDefault(); abrirCarrito();"><i class="fas fa-shopping-cart"></i> Mi Cotización</a></li>
+                    <li><a href="login.html">Acceso Vendedor</a></li>
                 </ul>
             </div>
 
             <div class="footer-column accordion-item">
                 <h4 class="accordion-header">
-                    CUENTA Y SOPORTE <i class="fas fa-chevron-down hide-desktop"></i>
-                </h4>
-                <ul class="accordion-content">
-                    <li><a href="#">Mi Cuenta</a></li>
-                    <li><a href="#" onclick="event.preventDefault(); document.getElementById('cartSidebar').classList.add('active'); document.getElementById('cartOverlay').classList.add('active');"><i class="fas fa-shopping-cart"></i> Mi Carrito</a></li>
-                    <li><a href="#">Preguntas Frecuentes (FAQ)</a></li>
-                    <li><a href="#">Términos y Condiciones</a></li>
-                    <li><a href="login.html">Panel Vendedor</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-column accordion-item">
-                <h4 class="accordion-header">
-                    CONTACTO Y UBICACIÓN <i class="fas fa-chevron-down hide-desktop"></i>
+                    CONTACTO <i class="fas fa-chevron-down hide-desktop"></i>
                 </h4>
                 <ul class="accordion-content info-list">
                     <li><i class="fas fa-envelope"></i> <a href="mailto:contacto@dycrea.cl">contacto@dycrea.cl</a></li>
@@ -180,15 +170,13 @@
 
         <div class="footer-bottom">
             <div class="footer-bottom-container">
-                <p>© 2026 by dycrea impresiones 3d. Todos los derechos reservados.</p>
-                <div class="payment-icons" style="display: flex; align-items: center; gap: 15px;">
-                    <i class="fas fa-university" title="Transferencia Bancaria" style="font-size: 1.4rem;"></i>
-                    <i class="fas fa-mobile-screen-button" title="Transferencia App" style="font-size: 1.4rem;"></i>
-                    <span style="font-size: 0.85rem; font-weight: 500; border-left: 1px solid rgba(255,255,255,0.2); padding-left: 15px; margin-left: 5px;">
-                        Pago vía Transferencia <br> o Billetera Digital (Mach/Tenpo)
-                    </span>
+                <p>© 2026 By Dycrea Impresiones 3D. Todos los derechos reservados.</p>
+                <div class="payment-icons" style="display:flex;align-items:center;gap:12px;">
+                    <i class="fas fa-university" title="Transferencia Bancaria" style="font-size:1.3rem;"></i>
+                    <i class="fas fa-mobile-screen-button" title="Billetera Digital" style="font-size:1.3rem;"></i>
+                    <span style="font-size:0.8rem;border-left:1px solid rgba(255,255,255,0.2);padding-left:12px;">Transferencia o billetera digital</span>
                 </div>
-                </div>
+            </div>
         </div>
     </footer>
 
@@ -214,6 +202,36 @@
     <script src="js/main.js"></script>
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>
+    // === COLAPSAR / EXPANDIR BANNER ===
+    (function() {
+        const banner = document.getElementById('hero-slider-container');
+        const btn    = document.getElementById('btnCollapseBanner');
+        const KEY    = 'dycrea_banner_oculto';
+
+        function aplicar(oculto, animate) {
+            const dur = animate ? '0.4s' : '0s';
+            banner.style.transition = `max-height ${dur} ease, opacity ${dur} ease`;
+            if (oculto) {
+                banner.style.maxHeight = '0';
+                banner.style.opacity   = '0';
+                btn.classList.add('colapsado');
+            } else {
+                banner.style.maxHeight = '520px';
+                banner.style.opacity   = '1';
+                btn.classList.remove('colapsado');
+            }
+        }
+
+        aplicar(sessionStorage.getItem(KEY) === '1', false);
+
+        btn.addEventListener('click', () => {
+            const ocultar = banner.style.maxHeight !== '0px';
+            sessionStorage.setItem(KEY, ocultar ? '1' : '0');
+            aplicar(ocultar, true);
+        });
+    })();
+    </script>
     <script type="text/javascript">
       (function(){
          emailjs.init({ publicKey: "T2erp87nPYJtwIfXWc" }); // ¡REEMPLAZA ESTO!

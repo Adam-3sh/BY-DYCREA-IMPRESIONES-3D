@@ -22,8 +22,7 @@ function agregarAlCarrito(id, titulo, precio, imagen, precioOriginal = null) {
     actualizarIconoCarrito();
     renderizarCarrito();
     mostrarNotificacion('¡Agregado al carrito!', 'info');
-    document.getElementById('cartSidebar').classList.add('active');
-    document.getElementById('cartOverlay').classList.add('active');
+    abrirCarrito();
 }
 
 function eliminarDelCarrito(index) {
@@ -80,9 +79,7 @@ function renderizarCarrito() {
 
 // === PROCESAR COMPRA Y CERRAR CARRITO ===
 window.cerrarYResetearCarrito = function() {
-    document.getElementById('cartSidebar').classList.remove('active');
-    document.getElementById('cartOverlay').classList.remove('active');
-    // Esperamos 300ms a que termine la animación de cierre para limpiar la vista
+    cerrarCarrito();
     setTimeout(() => renderizarCarrito(), 300); 
 };
 
@@ -106,18 +103,26 @@ async function procesarCompra() {
     btn.style.background = "#94a3b8"; 
 
     const numeroStore = "56974139790"; // TU NÚMERO
-    let mensajeWP = `*¡Hola! Soy ${nombre} y vengo de dycrea.cl para confirmar mi pedido:*\n\n`;
     let detalleCorreo = ``;
     let total = 0;
+    let lineasProductos = ``;
 
     carrito.forEach((item, i) => {
-        mensajeWP += `${i+1}. ${item.titulo} - $${item.precio.toLocaleString('es-CL')}\n`;
-        detalleCorreo += `${i+1}. ${item.titulo} - $${item.precio.toLocaleString('es-CL')}\n`;
+        lineasProductos += `${i+1}. ${item.titulo} — $${item.precio.toLocaleString('es-CL')}\n`;
+        detalleCorreo   += `${i+1}. ${item.titulo} — $${item.precio.toLocaleString('es-CL')}\n`;
         total += item.precio;
     });
 
-    mensajeWP += `\n*Total Estimado: $${total.toLocaleString('es-CL')}*`;
-    mensajeWP += `\n\nPor favor, envíame los datos bancarios para realizar la transferencia y adjuntar el comprobante. 🧾`;
+    let mensajeWP =
+`¡Hola! 👋 Soy *${nombre}* y me contacto desde *dycrea.cl* para hacer una cotización.
+
+📦 *Productos que me interesan:*
+${lineasProductos}
+💰 *Total estimado: $${total.toLocaleString('es-CL')} CLP*
+
+⚠️ _Entiendo que este pedido queda pendiente de confirmación por parte del vendedor, y que el precio final puede variar según disponibilidad._
+
+Cuando puedas, por favor confírmame la disponibilidad y envíame los datos para la transferencia. ¡Gracias! 😊`;
 
     // 3. ENVIAR CORREO SILENCIOSO DE RESPALDO
     try {
@@ -166,31 +171,28 @@ async function procesarCompra() {
     btn.style.background = "#25D366"; 
 }
 
+
+// === CERRAR CARRITO CON BOTÓN ATRÁS ===
+function abrirCarrito() {
+    document.getElementById('cartSidebar').classList.add('active');
+    document.getElementById('cartOverlay').classList.add('active');
+    history.pushState({ carritoAbierto: true }, '');
+}
+function cerrarCarrito() {
+    document.getElementById('cartSidebar').classList.remove('active');
+    document.getElementById('cartOverlay').classList.remove('active');
+}
+window.addEventListener('popstate', (e) => {
+    if (document.getElementById('cartSidebar').classList.contains('active')) {
+        cerrarCarrito();
+    }
+});
 // === Eventos universales para abrir/cerrar carrito ===
 document.querySelectorAll('.cart-btn, #openCartBtnProd').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.getElementById('cartSidebar').classList.add('active');
-        document.getElementById('cartOverlay').classList.add('active');
-    });
+    btn.addEventListener('click', abrirCarrito);
 });
-document.getElementById('closeCartBtn')?.addEventListener('click', cerrarYResetearCarrito);
-document.getElementById('cartOverlay')?.addEventListener('click', cerrarYResetearCarrito);
-
-// Eventos de abrir/cerrar carrito
-document.querySelectorAll('.cart-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.getElementById('cartSidebar').classList.add('active');
-        document.getElementById('cartOverlay').classList.add('active');
-    });
-});
-document.getElementById('closeCartBtn').addEventListener('click', () => {
-    document.getElementById('cartSidebar').classList.remove('active');
-    document.getElementById('cartOverlay').classList.remove('active');
-});
-document.getElementById('cartOverlay').addEventListener('click', () => {
-    document.getElementById('cartSidebar').classList.remove('active');
-    document.getElementById('cartOverlay').classList.remove('active');
-});
+document.getElementById('closeCartBtn')?.addEventListener('click', () => { history.back(); });
+document.getElementById('cartOverlay')?.addEventListener('click', () => { history.back(); });
 
 // === AUTO SLIDER DE IMÁGENES ===
 let sliderInterval;
@@ -284,19 +286,24 @@ function renderizarProductos(lista) {
         card.innerHTML = `
             <div class="image-container">
                 <div class="badges-container">${badgesHTML}</div>
-                <a href="producto.html?id=${prod.id}">
-                    <img src="${imagenPrincipal}" alt="${prod.titulo}" class="product-image ${tieneMultiples ? 'auto-slider' : ''}" data-images="${dataImagesStr}" data-index="0" loading="lazy">
-                </a>
+                <img src="${imagenPrincipal}" alt="${prod.titulo}" class="product-image ${tieneMultiples ? 'auto-slider' : ''}" data-images="${dataImagesStr}" data-index="0" loading="lazy">
                 <div class="quick-action-overlay">
                     ${btnCartHTML}
                 </div>
             </div>
             <div class="product-info">
-                <a href="producto.html?id=${prod.id}"><h3 class="product-title" style="cursor: pointer; color: inherit;">${prod.titulo}</h3></a>
+                <h3 class="product-title">${prod.titulo}</h3>
                 <div class="product-material">${materialPrincipal}</div>
                 <div class="product-price">${precioFormateado}</div>
             </div>
         `;
+        // Card completa clickeable — excepto el botón de carrito
+        card.style.cursor = "pointer";
+        card.addEventListener("click", (e) => {
+            if (!e.target.closest(".btn-add-cart")) {
+                window.location.href = `producto.html?id=${prod.id}`;
+            }
+        });
         contenedor.appendChild(card);
     });
     
