@@ -1,317 +1,515 @@
-/* =========================================
-   1. VARIABLES Y BASE
-   ========================================= */
+/* ================================================
+   GLOBAL.CSS — BY DYCREA IMPRESIONES 3D
+   ------------------------------------------------
+   ÍNDICE:
+   1.  Variables y Reset
+   2.  Tipografía base y Touch
+   3.  Header y Top Bar
+   4.  Buscador
+   5.  Carrito Lateral
+   6.  Toasts
+   7.  Footer
+   8.  Botón Colapsar Banner
+   9.  Strip Banner Colapsado
+   10. Formularios y Utilidades
+   11. ── MÓVIL ≤768px (bloque único) ──
+   ================================================ */
+
+/* ── 1. VARIABLES Y RESET ─────────────────────── */
 :root {
-    --bg-body: #f4f6f8; --bg-white: #ffffff; 
-    --text-dark: #1a1a1a; --text-body: #555555; --text-light: #999999; 
-    --primary-accent: #9ed615; --primary-dark: #7fac0d;
-    --secondary-brand: #0f172a; --danger: #ff4757;
-    --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
-    --shadow-md: 0 8px 24px rgba(0,0,0,0.08);
-    --border-light: #ebeeef; --radius-md: 12px;
+    --bg-body:         #f2f4f7;
+    --bg-white:        #ffffff;
+    --text-dark:       #1a1a1a;
+    --text-body:       #555555;
+    --text-light:      #9aa0aa;
+    --primary-accent:  #9ed615;
+    --primary-dark:    #7fac0d;
+    --secondary-brand: #0f172a;
+    --danger:          #ff4757;
+    --shadow-sm:       0 2px 8px rgba(0,0,0,0.05);
+    --shadow-md:       0 8px 24px rgba(0,0,0,0.09);
+    --border-light:    #eaecef;
+    --radius-md:       12px;
+    --radius-lg:       18px;
+    --nav-h:           60px;
 }
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-body { background-color: var(--bg-body); color: var(--text-body); line-height: 1.6; animation: fadeInPage 0.4s ease-in-out; }
-a { text-decoration: none; color: inherit; }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg-body);
+    color: var(--text-body);
+    line-height: 1.6;
+    animation: fadeInPage 0.3s ease;
+    -webkit-font-smoothing: antialiased;
+    overscroll-behavior-y: none;
+}
+a  { text-decoration: none; color: inherit; }
 @keyframes fadeInPage { from { opacity: 0; } to { opacity: 1; } }
 
-/*borrame si se ve mal*/
-* {
+/* ── 2. TIPOGRAFÍA BASE Y TOUCH ───────────────── */
+button, a, .icon-btn, .product-card {
     -webkit-tap-highlight-color: transparent;
+    font-family: inherit;
 }
-body {
-    -webkit-font-smoothing: antialiased;
-    overscroll-behavior-y: none; /* Evita el rebote excesivo al hacer scroll tope */
-}
-/* Efecto nativo al tocar botones */
 button, .icon-btn, .product-card {
-    transition: transform 0.1s ease-in-out, opacity 0.1s;
+    transition: transform 0.12s ease, opacity 0.12s;
 }
 button:active, .icon-btn:active, .product-card:active {
-    transform: scale(0.96) !important; /* El botón se hunde un poquito al tocarlo */
-    opacity: 0.9;
+    transform: scale(0.96) !important;
+    opacity: 0.88;
 }
 
-/* =========================================
-   2. HEADER Y TOP BAR
-   ========================================= */
-.top-bar { background-color: var(--secondary-brand); color: white; font-size: 0.8rem; padding: 8px 5%; display: flex; justify-content: space-between; font-weight: 300; }
+/* ── 3. HEADER Y TOP BAR ─────────────────────── */
+.top-bar {
+    background: var(--secondary-brand);
+    color: rgba(255,255,255,0.75);
+    font-size: 0.78rem;
+    padding: 7px 5%;
+    display: flex;
+    justify-content: space-between;
+    font-weight: 300;
+    letter-spacing: 0.01em;
+}
 .top-bar i { color: var(--primary-accent); margin-right: 5px; }
-.ecommerce-header { background: var(--bg-white); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-.header-container { display: flex; align-items: center; justify-content: space-between; padding: 15px 5%; max-width: 1600px; margin: 0 auto; gap: 30px; }
-.brand { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-.brand img { height: 45px; border-radius: 8px; }
-.brand h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.5px; color: var(--text-dark); }
-.header-search { flex: 1; max-width: 600px; display: flex; align-items: center; background: #f1f3f5; border-radius: 50px; padding: 5px; border: 1px solid transparent; transition: 0.3s; }
-.header-search:focus-within { background: var(--bg-white); border-color: var(--primary-accent); box-shadow: 0 0 0 3px rgba(158,214,21,0.2); }
-.header-search input { flex: 1; border: none; background: transparent; padding: 10px 20px; outline: none; font-size: 0.95rem; color: var(--text-dark); }
-.search-btn { background: var(--primary-accent); color: var(--secondary-brand); border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
-.search-btn:hover { background: var(--primary-dark); transform: scale(1.05); }
-.header-actions { display: flex; align-items: center; gap: 15px; }
-.icon-btn { background: transparent; border: none; font-size: 1.3rem; color: var(--text-dark); cursor: pointer; position: relative; transition: color 0.3s; padding: 5px; }
+
+.ecommerce-header {
+    background: var(--bg-white);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 0 var(--border-light), 0 2px 10px rgba(0,0,0,0.04);
+}
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 5%;
+    max-width: 1600px;
+    margin: 0 auto;
+    gap: 24px;
+}
+.brand { display: flex; align-items: center; gap: 10px; cursor: pointer; flex-shrink: 0; }
+.brand img { height: 42px; border-radius: 8px; }
+.brand h1 { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.4px; color: var(--text-dark); }
+
+.header-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.icon-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.25rem;
+    color: var(--text-dark);
+    cursor: pointer;
+    position: relative;
+    padding: 6px;
+    transition: color 0.2s;
+}
 .icon-btn:hover { color: var(--primary-accent); }
-.cart-badge { position: absolute; top: -5px; right: -5px; background: var(--danger); color: white; font-size: 0.7rem; font-weight: 700; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.cart-badge {
+    position: absolute; top: -3px; right: -5px;
+    background: var(--danger); color: white;
+    font-size: 0.62rem; font-weight: 700;
+    width: 17px; height: 17px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none;
+}
 
-/* Botones y Checkboxes Globales */
-.btn-publicar { background: var(--secondary-brand); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; }
-.btn-publicar:hover { background: var(--primary-accent); color: var(--secondary-brand); }
-.custom-checkbox { display: flex; align-items: center; margin-bottom: 12px; cursor: pointer; font-size: 0.9rem; user-select: none; }
-.custom-checkbox input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
-.checkmark { height: 18px; width: 18px; background-color: white; border: 1px solid #ccc; border-radius: 4px; margin-right: 10px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-.custom-checkbox:hover input ~ .checkmark { border-color: var(--primary-accent); }
-.custom-checkbox input:checked ~ .checkmark { background-color: var(--primary-accent); border-color: var(--primary-accent); }
-.checkmark:after { content: "\f00c"; font-family: "Font Awesome 5 Free"; font-weight: 900; color: var(--secondary-brand); font-size: 10px; display: none; }
-.custom-checkbox input:checked ~ .checkmark:after { display: block; }
+/* ── 4. BUSCADOR ─────────────────────────────── */
+.header-search {
+    flex: 1; max-width: 580px;
+    display: flex; align-items: center;
+    background: #f0f2f5;
+    border-radius: 50px;
+    padding: 5px;
+    border: 1.5px solid transparent;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+.header-search:focus-within {
+    background: var(--bg-white);
+    border-color: var(--primary-accent);
+    box-shadow: 0 0 0 3px rgba(158,214,21,0.15);
+}
+.header-search input {
+    flex: 1; border: none; background: transparent;
+    padding: 9px 16px; outline: none;
+    font-size: 0.92rem; font-family: inherit; color: var(--text-dark);
+}
+.search-btn {
+    background: var(--primary-accent); color: var(--secondary-brand);
+    border: none; width: 40px; height: 40px;
+    border-radius: 50%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; flex-shrink: 0;
+    transition: background 0.2s, transform 0.15s;
+}
+.search-btn:hover { background: var(--primary-dark); transform: scale(1.06); }
 
-/* =========================================
-   3. TOASTS Y CARRITO LATERAL
-   ========================================= */
-#toast-container { position: fixed; bottom: 30px; right: 30px; z-index: 9999; display: flex; flex-direction: column; gap: 15px; }
-.toast { background: var(--secondary-brand); color: white; padding: 15px 25px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 15px; transform: translateX(120%); opacity: 0; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-.toast.show { transform: translateX(0); opacity: 1; }
-.toast-icon { background: var(--primary-accent); color: var(--secondary-brand); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
-
-.cart-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; display: none; opacity: 0; transition: opacity 0.3s; }
+/* ── 5. CARRITO LATERAL ──────────────────────── */
+.cart-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.46);
+    z-index: 999; display: none; opacity: 0;
+    transition: opacity 0.3s;
+}
 .cart-overlay.active { display: block; opacity: 1; }
-.cart-sidebar { position: fixed; top: 0; right: -400px; width: 400px; max-width: 100%; height: 100%; background: var(--bg-white); z-index: 1000; box-shadow: -5px 0 15px rgba(0,0,0,0.1); transition: right 0.3s ease; display: flex; flex-direction: column; }
+
+.cart-sidebar {
+    position: fixed; top: 0; right: -420px;
+    width: 400px; max-width: 100%; height: 100%;
+    background: var(--bg-white);
+    z-index: 1000;
+    box-shadow: -4px 0 24px rgba(0,0,0,0.1);
+    transition: right 0.3s cubic-bezier(0.4,0,0.2,1);
+    display: flex; flex-direction: column;
+}
 .cart-sidebar.active { right: 0; }
-.cart-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light); }
-.cart-header h3 { font-size: 1.2rem; color: var(--secondary-brand); }
-.close-cart { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light); }
-.close-cart:hover { color: var(--danger); }
-.cart-items { flex: 1; overflow-y: auto; padding: 20px; }
-.cart-item { display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid #f0f0f0; padding-bottom: 15px; }
-.cart-item img { width: 70px; height: 70px; object-fit: cover; border-radius: 8px; }
+
+.cart-header {
+    padding: 20px 18px 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--border-light);
+}
+.cart-header h3 { font-size: 1.1rem; font-weight: 700; color: var(--secondary-brand); }
+.close-cart {
+    background: #f1f5f9; border: none;
+    width: 38px; height: 38px; border-radius: 50%;
+    font-size: 1rem; cursor: pointer;
+    color: var(--text-dark);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, color 0.2s;
+}
+.close-cart:hover { background: #fee2e2; color: var(--danger); }
+
+.cart-items { flex: 1; overflow-y: auto; padding: 16px; }
+.cart-item {
+    display: flex; gap: 13px;
+    margin-bottom: 16px; padding-bottom: 14px;
+    border-bottom: 1px solid var(--border-light);
+}
+.cart-item img { width: 66px; height: 66px; object-fit: cover; border-radius: 8px; background: #f5f5f5; }
 .cart-item-info { flex: 1; }
-.cart-item-title { font-size: 0.9rem; font-weight: 600; color: var(--text-dark); margin-bottom: 5px; }
+.cart-item-title { font-size: 0.87rem; font-weight: 600; color: var(--text-dark); margin-bottom: 3px; line-height: 1.3; }
 .cart-item-price { font-size: 1rem; font-weight: 800; color: var(--primary-dark); }
-.btn-remove-item { background: none; border: none; color: var(--danger); font-size: 0.8rem; cursor: pointer; margin-top: 5px; }
-.cart-footer { padding: 20px; border-top: 1px solid var(--border-light); background: #f9fafb; }
-.cart-total { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 800; margin-bottom: 15px; color: var(--secondary-brand); }
-.btn-checkout { width: 100%; background: #25D366; color: white; border: none; padding: 15px; border-radius: 30px; font-size: 1.1rem; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s; }
+.btn-remove-item { background: none; border: none; color: var(--danger); font-size: 0.78rem; cursor: pointer; margin-top: 4px; }
+
+.cart-footer {
+    padding: 16px 18px 18px;
+    border-top: 1px solid var(--border-light);
+    background: #f9fafb;
+}
+.cart-total {
+    display: flex; justify-content: space-between;
+    font-size: 1.1rem; font-weight: 800; margin-bottom: 14px;
+    color: var(--secondary-brand);
+}
+.btn-checkout {
+    width: 100%; background: #25D366; color: white;
+    border: none; padding: 14px; border-radius: 30px;
+    font-size: 1rem; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: background 0.2s, transform 0.15s;
+    font-family: inherit;
+}
 .btn-checkout:hover { background: #1ebe57; transform: translateY(-2px); }
 
-/* =========================================
-   4. FOOTER ECOMMERCE
-   ========================================= */
-.ecommerce-footer { background-color: var(--secondary-brand); color: white; padding: 60px 5% 0; margin-top: 50px; font-size: 0.9rem; font-weight: 300; }
-.footer-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; max-width: 1600px; margin: 0 auto 50px; }
-.footer-column h4 { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; color: var(--primary-accent); text-transform: uppercase; }
-.brand-column { display: flex; flex-direction: column; gap: 15px; }
-.footer-logo {
-    height: 200px; /* 🔥 Aumentamos casi al doble el tamaño (puedes subir o bajar este número) */
-    width: auto;       
-    max-width: 100%;  
-    object-fit: contain; 
-    align-self: flex-start; 
-    margin-bottom: 15px; 
+/* ── 6. TOASTS ───────────────────────────────── */
+#toast-container {
+    position: fixed; bottom: 26px; right: 26px;
+    z-index: 9999;
+    display: flex; flex-direction: column; gap: 10px;
 }
-.brand-column p { color: #cbd5e1; line-height: 1.4; }
-.accordion-content { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-.accordion-content li a { color: #cbd5e1; transition: color 0.3s; }
-.accordion-content li a:hover { color: var(--primary-accent); }
-.social-icons { display: flex; gap: 15px; font-size: 1.2rem; margin-top: 10px; }
-.social-icons a { color: #cbd5e1; transition: color 0.3s; }
+.toast {
+    background: var(--secondary-brand); color: white;
+    padding: 13px 20px; border-radius: 10px;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.16);
+    display: flex; align-items: center; gap: 13px;
+    transform: translateX(120%); opacity: 0;
+    transition: all 0.4s cubic-bezier(0.68,-0.55,0.265,1.55);
+}
+.toast.show { transform: translateX(0); opacity: 1; }
+.toast-icon {
+    background: var(--primary-accent); color: var(--secondary-brand);
+    width: 27px; height: 27px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 0.85rem;
+}
+
+/* ── 7. FOOTER ───────────────────────────────── */
+.ecommerce-footer {
+    background: var(--secondary-brand); color: white;
+    padding: 52px 5% 0; margin-top: 50px;
+    font-size: 0.87rem; font-weight: 300;
+}
+.footer-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 32px; max-width: 1600px;
+    margin: 0 auto 48px;
+}
+
+/* Logo a la izquierda, texto a la derecha */
+.brand-column {
+    display: flex; flex-direction: row;
+    align-items: flex-start; gap: 16px;
+}
+.footer-logo { height: 68px; width: auto; object-fit: contain; flex-shrink: 0; }
+.brand-column-text { display: flex; flex-direction: column; gap: 10px; padding-top: 4px; }
+.brand-column-text p { color: #94a3b8; font-size: 0.83rem; line-height: 1.55; max-width: 220px; }
+.social-icons { display: flex; gap: 14px; font-size: 1.1rem; }
+.social-icons a { color: #64748b; transition: color 0.2s; }
 .social-icons a:hover { color: var(--primary-accent); }
-.info-list i { color: var(--primary-accent); margin-right: 10px; }
-.footer-bottom { background-color: rgba(0, 0, 0, 0.2); padding: 20px 5%; font-size: 0.8rem; color: #cbd5e1; }
-.footer-bottom-container { max-width: 1600px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-.payment-icons { display: flex; gap: 15px; font-size: 1.2rem; align-items: center; }
-.payment-icons img { height: 25px; width: auto; }
 
-/* GLOBAL MOBILE */
+.footer-column h4 {
+    font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: #475569; margin-bottom: 16px;
+}
+.accordion-content { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.accordion-content li a { color: #94a3b8; font-size: 0.85rem; transition: color 0.2s; }
+.accordion-content li a:hover { color: var(--primary-accent); }
+.info-list li { display: flex; align-items: center; gap: 9px; color: #94a3b8; font-size: 0.85rem; margin-bottom: 8px; }
+.info-list i { color: var(--primary-accent); width: 15px; text-align: center; flex-shrink: 0; }
+.hide-desktop { display: none; }
+
+.footer-bottom {
+    background: rgba(0,0,0,0.22);
+    padding: 16px 5%; font-size: 0.76rem; color: #475569;
+}
+.footer-bottom-container {
+    max-width: 1600px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+}
+.payment-icons { display: flex; align-items: center; gap: 10px; font-size: 1.15rem; color: #64748b; }
+.payment-icons span { font-size: 0.76rem; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 10px; }
+
+/* ── 8. BOTÓN COLAPSAR BANNER ────────────────── */
+.banner-toggle-wrap {
+    display: flex; justify-content: center;
+    height: 20px; position: relative; z-index: 20;
+}
+#btnCollapseBanner {
+    position: relative; top: -14px;
+    background: var(--bg-white); color: var(--text-light);
+    border: 1px solid var(--border-light);
+    border-radius: 20px; height: 28px; padding: 0 13px; gap: 5px;
+    font-size: 0.69rem; font-family: inherit; font-weight: 500;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    transition: color 0.2s, border-color 0.2s;
+    white-space: nowrap;
+}
+#btnCollapseBanner::after  { content: "ocultar banner"; font-size: 0.67rem; }
+#btnCollapseBanner.colapsado::after { content: "ver banner"; }
+#btnCollapseBanner i { font-size: 0.58rem; transition: transform 0.35s; }
+#btnCollapseBanner.colapsado i { transform: rotate(180deg); }
+#btnCollapseBanner:hover { color: var(--primary-dark); border-color: var(--primary-accent); }
+#btnCollapseBanner:hover::after { color: var(--primary-dark); }
+
+/* ── 9. STRIP BANNER COLAPSADO ───────────────── */
+.banner-collapsed-strip {
+    display: none;
+    align-items: center; justify-content: space-between;
+    background: var(--secondary-brand);
+    color: #64748b; font-size: 0.77rem;
+    padding: 9px 5%; gap: 10px;
+}
+.banner-collapsed-strip i { color: var(--primary-accent); margin-right: 4px; }
+.strip-offer { font-weight: 600; color: var(--primary-accent); }
+.banner-collapsed-strip.visible { display: flex; }
+
+/* ── 10. FORMULARIOS Y UTILIDADES ────────────── */
+.btn-publicar {
+    background: var(--secondary-brand); color: white;
+    border: none; padding: 10px 20px; border-radius: 8px;
+    font-weight: 600; font-family: inherit; cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+.btn-publicar:hover { background: var(--primary-accent); color: var(--secondary-brand); }
+
+/* Checkbox personalizado (uso en index y panel) */
+.custom-checkbox {
+    display: flex; align-items: center;
+    margin-bottom: 10px; cursor: pointer;
+    font-size: 0.9rem; user-select: none;
+}
+.custom-checkbox input { position: absolute; opacity: 0; width: 0; height: 0; }
+.checkmark {
+    width: 17px; height: 17px; flex-shrink: 0;
+    background: white; border: 1.5px solid #ccc; border-radius: 4px;
+    margin-right: 9px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, border-color 0.2s;
+}
+.custom-checkbox:hover .checkmark { border-color: var(--primary-accent); }
+.custom-checkbox input:checked ~ .checkmark { background: var(--primary-accent); border-color: var(--primary-accent); }
+.checkmark::after {
+    content: "\f00c"; font-family: "Font Awesome 5 Free"; font-weight: 900;
+    color: var(--secondary-brand); font-size: 9px; display: none;
+}
+.custom-checkbox input:checked ~ .checkmark::after { display: block; }
+
+/* Desktop: ocultar bottom nav */
+.mobile-bottom-nav { display: none; }
+.hide-mobile { /* visible en desktop */ }
+
+/* ── 11. MÓVIL ≤768px ─────────────────────────
+   Bloque único — sin repetición
+   ──────────────────────────────────────────── */
 @media (max-width: 768px) {
-    .hide-mobile { display: none !important; }
-    .top-bar { justify-content: center; } 
-    .header-container { flex-wrap: wrap; gap: 15px; padding: 15px 5%; }
-    .brand h1 { font-size: 1.3rem; }
-    .header-search { order: 3; flex: 0 0 100%; max-width: 100%; }
-    #toast-container { left: 20px; right: 20px; bottom: 20px; align-items: center; }
-    .toast { width: 100%; justify-content: center; }
-    
-    /* Footer Mobile */
-    .ecommerce-footer { padding: 40px 5% 0; }
-    .footer-container { grid-template-columns: 1fr; gap: 0; }
-    .brand-column { align-items: center; text-align: center; padding-bottom: 30px; margin-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-    .accordion-item { margin-bottom: 10px; }
-    .accordion-header { display: flex; justify-content: space-between; align-items: center; background-color: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; cursor: pointer; user-select: none; }
-    .accordion-header i { font-size: 0.8rem; transition: transform 0.3s ease; }
-    .accordion-item.activo .accordion-header i { transform: rotate(180deg); }
-    .accordion-content { max-height: 0; overflow: hidden; transition: all 0.4s ease-in-out; padding: 0 15px; opacity: 0; }
-    .accordion-item.activo .accordion-content { max-height: 400px; padding: 15px; opacity: 1; }
-    .footer-bottom-container { flex-direction: column; gap: 15px; text-align: center; }
 
+    /* Utilidades */
+    .hide-mobile  { display: none !important; }
+    .hide-desktop { display: inline-block !important; }
+
+    /* Top-bar */
+    .top-bar { justify-content: center; font-size: 0.74rem; padding: 6px 4%; }
+
+    /* Header: logo + nombre en fila, buscador debajo full-width */
+    .header-container { flex-wrap: wrap; padding: 10px 4%; gap: 8px; }
+    .brand img { height: 32px; }
+    .brand h1  { font-size: 1rem; }
+    .header-actions { display: none; } /* sustituido por bottom nav */
+    .header-search {
+        order: 3; flex: 0 0 100%;
+        border-radius: 11px; padding: 4px 4px 4px 14px;
+    }
+    .header-search input { padding: 9px 6px; font-size: 0.93rem; }
+    .search-btn { width: 40px; height: 40px; border-radius: 9px; }
+
+    /* Botón colapsar banner */
+    .banner-toggle-wrap { height: 17px; }
+    #btnCollapseBanner { top: -12px; height: 24px; padding: 0 10px; font-size: 0.63rem; }
+    #btnCollapseBanner::after { font-size: 0.61rem; }
+
+    /* Carrito: panel deslizable desde abajo */
     .cart-sidebar {
-        top: auto;
-        bottom: -100%;
-        right: 0 !important; /* Anulamos el right anterior */
-        width: 100%;
-        height: 85vh; /* Ocupa el 85% de la pantalla */
-        border-radius: 25px 25px 0 0; /* Bordes redondeados arriba */
-        transition: bottom 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.1) !important; /* Animación con rebote sutil */
-        box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
+        top: auto; bottom: -100%; right: 0 !important;
+        width: 100%; height: 90vh;
+        border-radius: 22px 22px 0 0;
+        transition: bottom 0.35s cubic-bezier(0.175,0.885,0.32,1.1) !important;
+        box-shadow: 0 -10px 40px rgba(0,0,0,0.14);
     }
-    .cart-sidebar.active {
-        bottom: 0;
-    }
-    .cart-header {
-        padding: 25px 20px 15px;
-        position: relative;
-    }
-    /* Pestaña gris arribita típica de las apps para indicar que se puede deslizar */
+    .cart-sidebar.active { bottom: 0; }
+    .cart-header { padding: 22px 18px 14px; position: relative; }
+    /* Pastilla gris tipo app nativa */
     .cart-header::before {
-        content: '';
-        position: absolute;
-        top: 10px;
-        left: 50%;
+        content: ''; position: absolute; top: 9px; left: 50%;
         transform: translateX(-50%);
-        width: 40px;
-        height: 5px;
-        background: #e2e8f0;
-        border-radius: 10px;
+        width: 36px; height: 4px;
+        background: #e2e8f0; border-radius: 10px;
     }
-}
+    .close-cart { width: 40px; height: 40px; font-size: 1rem; }
 
-.mobile-bottom-nav {
-    display: none; /* Oculto en PC */
-}
+    /* Toasts centrados sobre nav */
+    #toast-container {
+        left: 14px; right: 14px;
+        bottom: calc(var(--nav-h) + 10px);
+        align-items: center;
+    }
+    .toast { width: 100%; justify-content: center; }
 
-@media (max-width: 768px) {
-    /* Ocultamos los iconos del header viejo para no duplicar */
-    .header-actions { display: none; }
-    
+    /* Footer: columna única con acordeones */
+    .ecommerce-footer { padding: 32px 5% 0; }
+    .footer-container {
+        grid-template-columns: 1fr;
+        gap: 0; margin-bottom: 24px;
+    }
+    /* Columna marca: logo + texto en fila, compacto */
+    .brand-column {
+        flex-direction: row; align-items: center;
+        padding-bottom: 20px; margin-bottom: 4px;
+        border-bottom: 1px solid rgba(255,255,255,0.07);
+        gap: 14px;
+    }
+    .footer-logo { height: 46px; }
+    .brand-column-text p { font-size: 0.78rem; }
+    /* Acordeones */
+    .accordion-item { border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .accordion-header {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 13px 0; cursor: pointer; user-select: none;
+        font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em;
+        color: #475569; text-transform: uppercase;
+    }
+    .accordion-header i { font-size: 0.72rem; transition: transform 0.3s; }
+    .accordion-item.activo .accordion-header i { transform: rotate(180deg); }
+    .accordion-content {
+        max-height: 0; overflow: hidden; opacity: 0;
+        transition: max-height 0.35s ease, padding 0.35s ease, opacity 0.25s ease;
+        padding: 0;
+    }
+    .accordion-item.activo .accordion-content { max-height: 280px; padding: 8px 0 16px; opacity: 1; }
+    .hide-desktop { display: inline-block !important; }
+    .footer-bottom { padding: 14px 5%; }
+    .footer-bottom-container { flex-direction: column; gap: 8px; text-align: center; }
+    .ecommerce-footer { padding-bottom: calc(var(--nav-h) + 20px) !important; }
+
+    /* ── Bottom Navigation ── */
     .mobile-bottom-nav {
         display: flex;
-        justify-content: space-around;
-        align-items: center;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
+        justify-content: space-around; align-items: center;
+        position: fixed; bottom: 0; left: 0; width: 100%;
         background: var(--bg-white);
-        box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
-        padding: 12px 10px;
-        padding-bottom: env(safe-area-inset-bottom, 15px); /* Respeta la barra de inicio de iPhone */
-        z-index: 900;
         border-top: 1px solid var(--border-light);
+        box-shadow: 0 -3px 14px rgba(0,0,0,0.06);
+        padding: 8px 8px;
+        padding-bottom: env(safe-area-inset-bottom, 10px);
+        z-index: 900;
+        height: var(--nav-h);
     }
     .nav-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 5px;
-        color: var(--text-light);
-        font-size: 0.7rem;
-        font-weight: 500;
+        display: flex; flex-direction: column; align-items: center; gap: 2px;
+        color: var(--text-light); font-size: 0.65rem; font-weight: 500;
+        padding: 5px 18px; border-radius: 14px;
+        transition: color 0.2s, background 0.2s;
     }
-    .nav-item i {
-        font-size: 1.3rem;
-        transition: 0.3s;
-    }
-    .nav-item.active {
-        color: var(--primary-dark);
-    }
-    .nav-item.active i {
-        transform: translateY(-2px);
-    }
-    .mobile-badge {
-        top: -6px;
-        right: -10px;
-    }
-    .footer-logo {
-        align-self: center;
-    }
-    
-    /* Le damos espacio al footer para que el menú no lo tape */
-    .ecommerce-footer {
-        padding-bottom: 80px !important;
-    }
-}
-/* =========================================
-   MEJORAS MÓVIL — BÚSQUEDA Y CARRITO
-   ========================================= */
-
-/* Buscador: lupa más cómoda en móvil */
-@media (max-width: 768px) {
-    .header-search {
-        padding: 6px 6px 6px 10px;
-    }
-    .header-search input {
-        padding: 10px 10px;
-        font-size: 1rem;
-    }
-    .search-btn {
-        width: 44px;
-        height: 44px;
-        font-size: 1.05rem;
-        flex-shrink: 0;
-    }
-
-    /* Cerrar carrito: área de toque más grande */
-    .close-cart {
-        width: 44px;
-        height: 44px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.4rem;
-        border-radius: 50%;
-        background: #f1f5f9;
-        color: var(--text-dark);
-    }
-    .close-cart:hover, .close-cart:active {
-        background: #fee2e2;
-        color: var(--danger);
-    }
+    .nav-item i { font-size: 1.2rem; transition: transform 0.2s; }
+    .nav-item.active { color: var(--secondary-brand); background: rgba(158,214,21,0.13); }
+    .nav-item.active i { transform: translateY(-1px); color: var(--primary-dark); }
+    .mobile-badge { top: -5px; right: -8px; }
 }
 
-/* =========================================
-   BOTÓN COLAPSAR BANNER
-   ========================================= */
+/* --- FIX LOGO --- */
+.brand img { 
+    height: 60px; /* Logo más grande en PC */
+    border-radius: 8px; 
+}
+@media (max-width: 768px) { 
+    .brand img { height: 48px; } /* Logo más grande en celular */
+}
+
+/* ---------------------------------- CAMBIOS 6-5 ---------------------------------- */
+
+/* --- FIX BOTÓN COLAPSAR BANNER --- */
 .banner-toggle-wrap {
-    display: flex;
+    display: flex; 
     justify-content: center;
-    height: 0;          /* No ocupa espacio vertical */
-    position: relative;
+    height: 0; /* Quitamos el alto fijo para que no corte el botón */
+    position: relative; 
     z-index: 20;
 }
 #btnCollapseBanner {
-    position: relative;
-    top: -18px;         /* Sobresale hacia arriba, encima del borde del banner */
-    background: var(--bg-white);
+    position: absolute; /* Lo sacamos del flujo para que no se coma el espacio */
+    top: -14px;
+    background: var(--bg-white); 
     color: var(--text-light);
     border: 1px solid var(--border-light);
-    border-radius: 50%;
-    width: 34px;
-    height: 34px;
-    font-size: 0.75rem;
+    border-radius: 20px; 
+    height: 28px; 
+    padding: 0 15px;
+    font-size: 0.7rem; 
+    font-weight: 600;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    transition: color 0.2s, transform 0.35s ease;
-}
-#btnCollapseBanner:hover {
-    color: var(--primary-dark);
-    border-color: var(--primary-accent);
-}
-#btnCollapseBanner.colapsado i {
-    transform: rotate(180deg);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08); /* Sombra para que flote mejor */
+    transition: all 0.3s ease;
 }
 
-/* =========================================
-   FOOTER SIMPLIFICADO — 3 COLUMNAS
-   ========================================= */
-@media (min-width: 769px) {
-    .footer-container {
-        grid-template-columns: 1.6fr 1fr 1fr;
-    }
-}
-
-/* =========================================
-   PRODUCT CARD — CURSOR COMPLETO
-   ========================================= */
-.product-card .image-container img {
-    cursor: pointer;
+/* --- FIX IMÁGENES SLIDER --- */
+.product-image {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Fuerza a que sea siempre un cuadrado perfecto */
+    object-fit: cover;   /* Recorta el sobrante sin deformar la imagen */
+    object-position: center;
+    transition: opacity 0.2s ease-in-out;
 }
