@@ -1,201 +1,18 @@
-// === CONFIGURACIÓN DE SUPABASE ===
-const supabaseUrl = 'https://xlsrviwsygmzalbcuqyf.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhsc3J2aXdzeWdtemFsYmN1cXlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkxMjUsImV4cCI6MjA4NzA4NTEyNX0.maNasYLRxMr4lPuTrSs8tLtXYPfhcw3FXpI1vH-PAz4'; 
-const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+// js/main.js
+// === CONTROLADOR DE LA PÁGINA DE INICIO ===
 
 const contenedor = document.getElementById('contenedor-productos');
 const contadorText = document.getElementById('contador-resultados');
 let productosGlobales = [];
 
-// === SISTEMA DE CARRITO DE COMPRAS ===
-let carrito = JSON.parse(localStorage.getItem('dycrea_carrito')) || [];
-
-function actualizarIconoCarrito() {
-    const badges = document.querySelectorAll('.cart-badge');
-    badges.forEach(badge => badge.textContent = carrito.length);
-}
-
-function agregarAlCarrito(id, titulo, precio, imagen, precioOriginal = null) {
-    // Ahora guardamos también el precio original en la memoria
-    carrito.push({ id, titulo, precio, imagen, precioOriginal });
-    localStorage.setItem('dycrea_carrito', JSON.stringify(carrito));
-    actualizarIconoCarrito();
-    renderizarCarrito();
-    mostrarNotificacion('¡Agregado al carrito!', 'info');
-    abrirCarrito();
-}
-
-function eliminarDelCarrito(index) {
-    carrito.splice(index, 1);
-    localStorage.setItem('dycrea_carrito', JSON.stringify(carrito));
-    actualizarIconoCarrito();
-    renderizarCarrito();
-}
-
-function renderizarCarrito() {
-    const container = document.getElementById('cartItemsContainer');
-    const priceText = document.getElementById('cartTotalPrice');
-    if(!container) return; 
-    
-    container.innerHTML = '';
-    let total = 0;
-
-    if(carrito.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: gray; margin-top: 20px;">Tu carrito está vacío</p>';
-        priceText.textContent = '$0';
-        return;
+// === SKELETON LOADING ===
+function mostrarSkeleton() {
+    if (!contenedor) return;
+    contenedor.innerHTML = '';
+    for(let i=0; i<8; i++){
+        contenedor.innerHTML += `<div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-title"></div><div class="skeleton-text"></div><div class="skeleton-price"></div></div>`;
     }
-
-    carrito.forEach((item, index) => {
-        total += item.precio;
-        
-        // --- MAGIA: Calcular diseño de oferta para el carrito ---
-        let precioInfo = `<div class="cart-item-price">$${item.precio.toLocaleString('es-CL')}</div>`;
-        if (item.precioOriginal && item.precioOriginal > item.precio) {
-            let ahorro = item.precioOriginal - item.precio;
-            precioInfo = `
-                <div class="cart-item-price" style="display: flex; flex-direction: column; line-height: 1.2; margin-top: 5px;">
-                    <span style="text-decoration: line-through; color: #a0aec0; font-size: 0.8rem; font-weight: 500;">$${item.precioOriginal.toLocaleString('es-CL')}</span>
-                    <span style="color: var(--danger); font-size: 1.1rem;">$${item.precio.toLocaleString('es-CL')}</span>
-                    <span style="color: #27ae60; font-size: 0.75rem; font-weight: 700;">¡Ahorras $${ahorro.toLocaleString('es-CL')}!</span>
-                </div>
-            `;
-        }
-
-        const div = document.createElement('div');
-        div.className = 'cart-item';
-        div.innerHTML = `
-            <img src="${item.imagen}" alt="${item.titulo}" loading="lazy">
-            <div class="cart-item-info">
-                <div class="cart-item-title">${item.titulo}</div>
-                ${precioInfo}
-                <button class="btn-remove-item" onclick="eliminarDelCarrito(${index})"><i class="fas fa-trash"></i> Quitar</button>
-            </div>
-        `;
-        container.appendChild(div);
-    });
-    priceText.textContent = `$${total.toLocaleString('es-CL')}`;
 }
-
-// === PROCESAR COMPRA Y CERRAR CARRITO ===
-window.cerrarYResetearCarrito = function() {
-    cerrarCarrito();
-    setTimeout(() => renderizarCarrito(), 300); 
-};
-
-async function procesarCompra() {
-    if(carrito.length === 0) return alert("El carrito está vacío.");
-    
-    // 1. Capturar y Validar datos del cliente
-    const nombre = document.getElementById('cart-nombre').value.trim();
-    const telefonoInput = document.getElementById('cart-telefono').value.trim();
-
-    if(!nombre || nombre.length < 3) return alert("Por favor, ingresa un nombre válido (mínimo 3 letras).");
-    if(telefonoInput.length !== 8) return alert("El número de teléfono debe tener exactamente 8 dígitos. (Ej: 12345678)");
-
-    const telefonoCompleto = "+569" + telefonoInput;
-
-    // 2. Cambiar botón a estado de carga
-    const btn = document.querySelector('.btn-checkout');
-    const textoOriginal = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
-    btn.disabled = true;
-    btn.style.background = "#94a3b8"; 
-
-    const numeroStore = "56944018617"; // TU NÚMERO
-    let detalleCorreo = ``;
-    let total = 0;
-    let lineasProductos = ``;
-
-    carrito.forEach((item, i) => {
-        lineasProductos += `${i+1}. ${item.titulo} — $${item.precio.toLocaleString('es-CL')}\n`;
-        detalleCorreo   += `${i+1}. ${item.titulo} — $${item.precio.toLocaleString('es-CL')}\n`;
-        total += item.precio;
-    });
-
-    let mensajeWP =
-`¡Hola! 👋 Soy *${nombre}* y me contacto desde *dycrea.cl* para hacer una cotización.
-
-📦 *Productos que me interesan:*
-${lineasProductos}
-💰 *Total estimado: $${total.toLocaleString('es-CL')} CLP*
-
-⚠️ _Entiendo que este pedido queda pendiente de confirmación por parte del vendedor, y que el precio final puede variar según disponibilidad._
-
-Cuando puedas, por favor confírmame la disponibilidad y envíame los datos para la transferencia. ¡Gracias! 😊`;
-
-    // 3. ENVIAR CORREO SILENCIOSO DE RESPALDO
-    try {
-        await emailjs.send(
-            "service_3qfabfd",   // ¡RECUERDA REEMPLAZAR ESTO CUANDO TENGAS EMAILJS!
-            "template_fso1jri",  // ¡RECUERDA REEMPLAZAR ESTO CUANDO TENGAS EMAILJS!
-            {
-                nombre_cliente: nombre,
-                telefono_cliente: telefonoCompleto,
-                total_carrito: `$${total.toLocaleString('es-CL')}`,
-                detalle_carrito: detalleCorreo
-            }
-        );
-    } catch (error) { console.log("Error silencioso:", error); }
-
-    // 4. ABRIR WHATSAPP
-    const url = `https://api.whatsapp.com/send?phone=${numeroStore}&text=${encodeURIComponent(mensajeWP)}`;
-    window.open(url, '_blank');
-
-    // 5. VACIAR CARRITO Y MOSTRAR CONFIRMACIÓN VISUAL EN EL PANEL
-    carrito = [];
-    localStorage.removeItem('dycrea_carrito');
-    actualizarIconoCarrito();
-    
-    document.getElementById('cartItemsContainer').innerHTML = `
-        <div style="text-align: center; padding: 40px 20px; animation: fadeInPage 0.4s;">
-            <i class="fas fa-check-circle" style="font-size: 4.5rem; color: #25D366; margin-bottom: 20px;"></i>
-            <h3 style="color: var(--secondary-brand); font-size: 1.5rem; margin-bottom: 15px;">¡Listo, ${nombre}!</h3>
-            <p style="color: var(--text-body); font-size: 0.95rem; margin-bottom: 25px; line-height: 1.6;">
-                Tu cotización fue generada y hemos abierto WhatsApp.<br><br>
-                <strong style="color: var(--danger);">¡IMPORTANTE!</strong> No olvides presionar <strong>"Enviar"</strong> en tu chat para que nos llegue el mensaje.
-            </p>
-            <button onclick="cerrarYResetearCarrito()" style="background: #f8fafc; color: var(--text-dark); padding: 12px 20px; border: 2px solid #e2e8f0; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; transition: 0.3s;">
-                Entendido, cerrar
-            </button>
-        </div>
-    `;
-    
-    // Limpiamos los campos e importes para la próxima compra
-    document.getElementById('cartTotalPrice').textContent = '$0';
-    document.getElementById('cart-nombre').value = '';
-    document.getElementById('cart-telefono').value = '';
-    
-    btn.innerHTML = textoOriginal;
-    btn.disabled = false;
-    btn.style.background = "#25D366"; 
-}
-
-
-// === CERRAR CARRITO CON BOTÓN ATRÁS ===
-function abrirCarrito() {
-    document.getElementById('cartSidebar').classList.add('active');
-    document.getElementById('cartOverlay').classList.add('active');
-    history.pushState({ carritoAbierto: true }, '');
-}
-function cerrarCarrito() {
-    document.getElementById('cartSidebar').classList.remove('active');
-    document.getElementById('cartOverlay').classList.remove('active');
-}
-window.addEventListener('popstate', (e) => {
-    if (document.getElementById('cartSidebar').classList.contains('active')) {
-        cerrarCarrito();
-    }
-});
-// === Eventos universales para abrir/cerrar carrito ===
-document.querySelectorAll('.cart-btn, #openCartBtnProd').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        e.preventDefault(); // Esto detiene el comportamiento por defecto del enlace
-        abrirCarrito();
-    });
-});
-document.getElementById('closeCartBtn')?.addEventListener('click', () => { history.back(); });
-document.getElementById('cartOverlay')?.addEventListener('click', () => { history.back(); });
 
 // === AUTO SLIDER DE IMÁGENES ===
 let sliderInterval;
@@ -218,26 +35,6 @@ function iniciarAutoSlider() {
     }, 3000); // Cambia cada 3 segundos
 }
 
-// === SISTEMA DE NOTIFICACIONES ===
-function mostrarNotificacion(mensaje, tipo = "oferta") {
-    const toastContainer = document.getElementById('toast-container');
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    const icono = tipo === 'oferta' ? '<i class="fas fa-fire"></i>' : '<i class="fas fa-check"></i>';
-    toast.innerHTML = `<div class="toast-icon">${icono}</div><div class="toast-text">${mensaje}</div>`;
-    toastContainer.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 100);
-    setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3000);
-}
-
-// === SKELETON LOADING ===
-function mostrarSkeleton() {
-    contenedor.innerHTML = '';
-    for(let i=0; i<8; i++){
-        contenedor.innerHTML += `<div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-title"></div><div class="skeleton-text"></div><div class="skeleton-price"></div></div>`;
-    }
-}
-
 // === RENDERIZAR PRODUCTOS ===
 function renderizarProductos(lista) {
     contenedor.innerHTML = ''; 
@@ -256,16 +53,14 @@ function renderizarProductos(lista) {
         const imagenPrincipal = (prod.imagenes && prod.imagenes.length > 0) ? prod.imagenes[0] : 'https://via.placeholder.com/500x500';
         const dataImagesStr = tieneMultiples ? prod.imagenes.join('|||') : imagenPrincipal;
 
-        // --- CÁLCULO MÁGICO DE OFERTAS, ETIQUETAS Y STOCK ---
         let esOfertaValida = prod.precio_oferta && (!prod.fecha_fin_oferta || new Date(prod.fecha_fin_oferta) > new Date());
         let precioMostrar = esOfertaValida ? prod.precio_oferta : prod.precio;
-        const sinStock = prod.stock <= 0; // 🔥 Verificamos si hay stock
+        const sinStock = prod.stock <= 0; 
         
         let precioOriginalHTML = esOfertaValida ? `<span style="display: block; text-decoration: line-through; color: #a0aec0; font-size: 0.85rem; font-weight: 500; margin-bottom: -2px;">Normal: $${prod.precio.toLocaleString('es-CL')}</span>` : '';
         let colorNuevo = esOfertaValida ? 'var(--danger)' : 'var(--secondary-brand)';
         const precioFormateado = precioOriginalHTML + `<span style="color: ${colorNuevo};">` + new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(precioMostrar) + `</span>`;
 
-        // Lógica de Etiquetas (Prioridad al AGOTADO)
         let badgesHTML = `<span class="badge category">${prod.categoria}</span>`;
         if (sinStock) {
             badgesHTML += `<span class="badge oferta" style="background: #718096; animation: none;">AGOTADO</span>`;
@@ -278,11 +73,11 @@ function renderizarProductos(lista) {
 
         const materialPrincipal = (prod.material && prod.material.length > 0) ? prod.material.join(', ') : 'Impresión 3D';
 
-        // Lógica del botón (Si no hay stock, se bloquea)
         let btnCartHTML = '';
         if (sinStock) {
             btnCartHTML = `<button class="btn-add-cart" disabled style="background: #cbd5e1; color: #64748b; cursor: not-allowed; width: 100%;"><i class="fas fa-times-circle"></i> Agotado</button>`;
         } else {
+            // Llama a la función global agregarAlCarrito de carrito.js
             btnCartHTML = `<button class="btn-add-cart" onclick="agregarAlCarrito('${prod.id}', '${prod.titulo.replace(/'/g, "")}', ${precioMostrar}, '${imagenPrincipal}', ${esOfertaValida ? prod.precio : null})" style="background: var(--secondary-brand); color: white; width: 100%;"><i class="fas fa-cart-plus"></i> Al Carrito</button>`;
         }
 
@@ -300,7 +95,7 @@ function renderizarProductos(lista) {
                 <div class="product-price">${precioFormateado}</div>
             </div>
         `;
-        // Card completa clickeable — excepto el botón de carrito
+        
         card.style.cursor = "pointer";
         card.addEventListener("click", (e) => {
             if (!e.target.closest(".btn-add-cart")) {
@@ -311,7 +106,7 @@ function renderizarProductos(lista) {
     });
     
     contadorText.textContent = lista.length;
-    iniciarAutoSlider(); // Iniciar animación automática
+    iniciarAutoSlider(); 
 }
 
 // === MOTOR DE FILTROS ===
@@ -320,12 +115,9 @@ function aplicarFiltros() {
     const catActiva = document.querySelector('.category-list a.active');
     const categoria = catActiva ? catActiva.textContent.trim() : 'Todas';
     const matSeleccionados = Array.from(document.querySelectorAll('.filter-section:nth-of-type(2) input[type="checkbox"]:checked')).map(cb => cb.closest('label').textContent.trim());
-    
-    // Capturar qué opción de ordenamiento se seleccionó
     const sortSelect = document.querySelector('.sort-select');
     const ordenSeleccionado = sortSelect ? sortSelect.value : 'Más Relevantes';
 
-    // 1. Primero filtramos (búsqueda, categoría, material)
     let filtrados = productosGlobales.filter(prod => {
         const cTexto = prod.titulo.toLowerCase().includes(textoBuscado) || prod.categoria.toLowerCase().includes(textoBuscado);
         const cCat = (categoria === 'Todas') || (prod.categoria === categoria);
@@ -336,44 +128,39 @@ function aplicarFiltros() {
         return cTexto && cCat && cMat;
     });
 
-    // 2. Luego ordenamos los resultados filtrados
     if (ordenSeleccionado === 'Menor Precio') {
         filtrados.sort((a, b) => {
-            // Evaluamos el precio real (considerando si hay ofertas activas)
             let precioA = (a.precio_oferta && (!a.fecha_fin_oferta || new Date(a.fecha_fin_oferta) > new Date())) ? a.precio_oferta : a.precio;
             let precioB = (b.precio_oferta && (!b.fecha_fin_oferta || new Date(b.fecha_fin_oferta) > new Date())) ? b.precio_oferta : b.precio;
-            return precioA - precioB; // De menor a mayor
+            return precioA - precioB; 
         });
     } else if (ordenSeleccionado === 'Mayor Precio') {
         filtrados.sort((a, b) => {
             let precioA = (a.precio_oferta && (!a.fecha_fin_oferta || new Date(a.fecha_fin_oferta) > new Date())) ? a.precio_oferta : a.precio;
             let precioB = (b.precio_oferta && (!b.fecha_fin_oferta || new Date(b.fecha_fin_oferta) > new Date())) ? b.precio_oferta : b.precio;
-            return precioB - precioA; // De mayor a menor
+            return precioB - precioA; 
         });
     }
-    // Si es 'Más Relevantes', no hacemos nada extra porque ya vienen ordenados por fecha de creación desde Supabase.
 
     renderizarProductos(filtrados);
 }
 
-// Escuchadores de eventos para ejecutar los filtros
-document.getElementById('searchInput').addEventListener('input', aplicarFiltros);
-document.querySelectorAll('.category-list a').forEach(enlace => {
-    enlace.addEventListener('click', (e) => {
-        e.preventDefault(); 
-        document.querySelectorAll('.category-list a').forEach(el => el.classList.remove('active'));
-        e.target.classList.add('active');
-        aplicarFiltros();
-    });
-});
+// Escuchadores de Filtros
+document.getElementById('searchInput')?.addEventListener('input', aplicarFiltros);
 document.querySelectorAll('.sidebar input[type="checkbox"]').forEach(cb => cb.addEventListener('change', aplicarFiltros));
+document.querySelector('.sort-select')?.addEventListener('change', aplicarFiltros);
 
-// 🔥 ESCUCHADOR NUEVO PARA EL MENÚ DE ORDENAMIENTO
-const selectorOrden = document.querySelector('.sort-select');
-if (selectorOrden) {
-    selectorOrden.addEventListener('change', aplicarFiltros);
+// Lógica de UI Móvil para Filtros
+const btnFiltros = document.getElementById('btnToggleFiltros');
+const sidebar = document.getElementById('sidebarFiltros');
+if(btnFiltros && sidebar) {
+    btnFiltros.addEventListener('click', () => {
+        sidebar.classList.toggle('mostrar');
+        btnFiltros.innerHTML = sidebar.classList.contains('mostrar') ? '<i class="fas fa-times"></i> Ocultar Filtros' : '<i class="fas fa-filter"></i> Mostrar Filtros';
+    });
 }
-// === CARGAR BASE DE DATOS ===
+
+// === CARGA INICIAL DE BASE DE DATOS ===
 async function cargarProductosDesdeBD() {
     mostrarSkeleton(); 
     try {
@@ -383,44 +170,21 @@ async function cargarProductosDesdeBD() {
         setTimeout(() => { aplicarFiltros(); }, 400); 
     } catch (err) {
         console.error(err);
-        contenedor.innerHTML = '<p>Ocurrió un error.</p>';
+        contenedor.innerHTML = '<p>Ocurrió un error al cargar los productos.</p>';
     }
 }
 
-cargarProductosDesdeBD();
-actualizarIconoCarrito();
-renderizarCarrito();
-
-// Lógica de UI Móvil
-const btnFiltros = document.getElementById('btnToggleFiltros');
-const sidebar = document.getElementById('sidebarFiltros');
-if(btnFiltros && sidebar) {
-    btnFiltros.addEventListener('click', () => {
-        sidebar.classList.toggle('mostrar');
-        btnFiltros.innerHTML = sidebar.classList.contains('mostrar') ? '<i class="fas fa-times"></i> Ocultar Filtros' : '<i class="fas fa-filter"></i> Mostrar Filtros';
-    });
-}
-// === CARGAR CATEGORÍAS DINÁMICAMENTE EN LA TIENDA ===
 async function cargarCategoriasStore() {
     try {
-        const { data, error } = await supabaseClient
-            .from('categorias')
-            .select('nombre')
-            .order('nombre');
-
+        const { data, error } = await supabaseClient.from('categorias').select('nombre').order('nombre');
         if (error) throw error;
 
         const listaSidebar = document.getElementById('lista-categorias-sidebar');
-        
-        // Mantenemos la opción "Todas"
-        listaSidebar.innerHTML = '<li><a href="#" class="active">Todas</a></li>';
-        
-        // Agregamos las de la base de datos
-        data.forEach(cat => {
-            listaSidebar.innerHTML += `<li><a href="#">${cat.nombre}</a></li>`;
-        });
+        if (!listaSidebar) return;
 
-        // Volvemos a activar los "clics" para los filtros en las nuevas categorías
+        listaSidebar.innerHTML = '<li><a href="#" class="active">Todas</a></li>';
+        data.forEach(cat => { listaSidebar.innerHTML += `<li><a href="#">${cat.nombre}</a></li>`; });
+
         document.querySelectorAll('.category-list a').forEach(enlace => {
             enlace.addEventListener('click', (e) => {
                 e.preventDefault(); 
@@ -429,50 +193,20 @@ async function cargarCategoriasStore() {
                 aplicarFiltros();
             });
         });
-
-    } catch (err) {
-        console.error("Error cargando categorías:", err);
-    }
+    } catch (err) { console.error("Error cargando categorías:", err); }
 }
 
-// Ejecutamos la carga de categorías al abrir la página
-cargarCategoriasStore();
-
-// === LÓGICA DEL ACORDEÓN DEL FOOTER (CORREGIDA) ===
-document.querySelectorAll('.accordion-header').forEach(header => {
-    header.addEventListener('click', () => {
-        // Evaluamos el tamaño de la pantalla al hacer clic
-        if(window.innerWidth <= 768) {
-            const item = header.parentElement;
-            if(item.classList.contains('activo')) {
-                item.classList.remove('activo');
-            } else {
-                document.querySelectorAll('.accordion-item').forEach(other => other.classList.remove('activo')); 
-                item.classList.add('activo'); 
-            }
-        }
-    });
-});
-
-// === CARGAR BANNERS (CARTELES DE OFERTAS) ===
 async function cargarBanners() {
     const container = document.getElementById('hero-slider-container');
     if (!container) return;
 
     try {
-        const { data, error } = await supabaseClient
-            .from('banners')
-            .select('*')
-            .eq('activo', true)
-            .order('fecha_creacion', { ascending: false });
-
+        const { data, error } = await supabaseClient.from('banners').select('*').eq('activo', true).order('fecha_creacion', { ascending: false });
         if (error) throw error;
 
-        // 1. Filtrar los banners que ya expiraron (si tienen fecha límite)
         const ahora = new Date();
         const bannersActivos = data ? data.filter(b => !b.fecha_expiracion || new Date(b.fecha_expiracion) > ahora) : [];
 
-        // 2. SIEMPRE ponemos el cartel por defecto como el primero
         let slidesHTML = `
             <div class="slide active" style="background: linear-gradient(to right, #0f172a, #1e293b);">
                 <div class="hero-content">
@@ -483,7 +217,6 @@ async function cargarBanners() {
             </div>
         `;
 
-        // 3. Añadimos los carteles extraídos de Supabase
         bannersActivos.forEach((banner) => {
             slidesHTML += `
                 <div class="slide" style="background-image: url('${banner.imagen_url}');">
@@ -497,9 +230,8 @@ async function cargarBanners() {
         });
 
         container.innerHTML = slidesHTML;
-        const totalSlides = bannersActivos.length + 1; // +1 por el banner por defecto
+        const totalSlides = bannersActivos.length + 1; 
 
-        // 4. Dibujar los puntitos y activar el loop SIN ERRORES
         if (totalSlides > 1) {
             let dotsHTML = '<div class="slider-controls">';
             for(let i=0; i < totalSlides; i++) {
@@ -508,27 +240,24 @@ async function cargarBanners() {
             dotsHTML += '</div>';
             container.innerHTML += dotsHTML;
 
-            // Limpiamos intervalos anteriores por si acaso
             if(window.bannerInterval) clearInterval(window.bannerInterval);
             
-            // Loop perfecto que no se rompe al final
             window.bannerInterval = setInterval(() => {
                 const slides = document.querySelectorAll('#hero-slider-container .slide');
                 let currentIndex = Array.from(slides).findIndex(s => s.classList.contains('active'));
                 let nextIndex = (currentIndex + 1) % slides.length;
                 cambiarSlide(nextIndex);
-            }, 5000); // Cambia cada 5 segundos
+            }, 5000); 
         }
-    } catch (err) {
-        console.error("Error cargando banners:", err);
-    }
+    } catch (err) { console.error("Error cargando banners:", err); }
 }
 
-// Función global para cambiar slides manualmente y automáticamente
 window.cambiarSlide = function(index) {
     document.querySelectorAll('#hero-slider-container .slide').forEach((s, i) => s.classList.toggle('active', i === index));
     document.querySelectorAll('#hero-slider-container .slider-dot').forEach((d, i) => d.classList.toggle('active', i === index));
 };
 
-// Ejecutamos
+// Ejecución inicial
+cargarProductosDesdeBD();
+cargarCategoriasStore();
 cargarBanners();

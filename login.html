@@ -51,12 +51,8 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
     <script>
-        const supabaseUrl = 'https://xlsrviwsygmzalbcuqyf.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhsc3J2aXdzeWdtemFsYmN1cXlmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkxMjUsImV4cCI6MjA4NzA4NTEyNX0.maNasYLRxMr4lPuTrSs8tLtXYPfhcw3FXpI1vH-PAz4'; 
-        
-        // ¡Aquí estaba el error! Le cambiamos el nombre a supabaseClient
-        const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
         document.getElementById('form-login').addEventListener('submit', async (e) => {
             e.preventDefault();
