@@ -136,9 +136,12 @@ inputImagenes.addEventListener('change', function() {
 formulario.addEventListener('submit', async (e) => {
     e.preventDefault(); 
 
+    // --- MEJORA UX: BLOQUEO DE BOTÓN ---
     btnSubmit.disabled = true;
-    btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subiendo archivos...';
-    mensajeEstado.textContent = '';
+    btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subiendo Producto...';
+    btnSubmit.style.opacity = "0.7";
+    btnSubmit.style.cursor = "not-allowed";
+    mensajeEstado.innerHTML = '<span style="color: #3b82f6;"><i class="fas fa-circle-notch fa-spin"></i> Comprimiendo imágenes y guardando...</span>';
 
     try {
         const archivos = inputImagenes.files;
@@ -212,8 +215,11 @@ formulario.addEventListener('submit', async (e) => {
         mensajeEstado.style.color = 'var(--danger)';
         mensajeEstado.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${error.message}`;
     } finally {
+        // --- RESTAURAR BOTÓN ---
         btnSubmit.disabled = false;
         btnSubmit.innerHTML = '<i class="fas fa-paper-plane"></i> Publicar en el Catálogo';
+        btnSubmit.style.opacity = "1";
+        btnSubmit.style.cursor = "pointer";
     }
 });
 
@@ -233,9 +239,13 @@ if(inputImagenBanner) {
 if(formBanner) {
     formBanner.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        // --- MEJORA UX: BLOQUEO DE BOTÓN ---
         btnSubmitBanner.disabled = true;
-        btnSubmitBanner.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subiendo Banner...';
-        msjBanner.textContent = '';
+        btnSubmitBanner.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Subiendo Banner...';
+        btnSubmitBanner.style.opacity = "0.7";
+        btnSubmitBanner.style.cursor = "not-allowed";
+        msjBanner.innerHTML = '<span style="color: #3b82f6;"><i class="fas fa-spinner fa-spin"></i> Comprimiendo cartel y publicando...</span>';
 
         try {
             const archivoOriginal = inputImagenBanner.files[0];
@@ -287,8 +297,11 @@ if(formBanner) {
             msjBanner.style.color = 'var(--danger)';
             msjBanner.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${error.message}`;
         } finally {
+            // --- RESTAURAR BOTÓN ---
             btnSubmitBanner.disabled = false;
             btnSubmitBanner.innerHTML = '<i class="fas fa-upload"></i> Publicar Cartel';
+            btnSubmitBanner.style.opacity = "1";
+            btnSubmitBanner.style.cursor = "pointer";
         }
     });
 }
@@ -547,4 +560,3 @@ cargarCategoriasAdmin();
 cargarMaterialesAdmin();
 cargarColoresAdmin();
 cargarProductosAdmin();
-

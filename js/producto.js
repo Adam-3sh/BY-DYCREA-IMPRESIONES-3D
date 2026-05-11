@@ -86,6 +86,7 @@ async function cargarDetalleProducto() {
         setSafeText('detail-pers', data.personalizable ? 'Sí' : 'No');
 
         // Stock y Botón
+        // --- SELECCIÓN DE VARIANTES Y BOTÓN AL CARRITO ---
         const sinStock = data.stock <= 0;
         const textoStock = document.getElementById('detail-stock');
         if (textoStock) {
@@ -95,6 +96,8 @@ async function cargarDetalleProducto() {
 
         const btnAccion = document.getElementById('btn-cotizar-detail');
         if (btnAccion) {
+            const containerBotones = btnAccion.parentElement;
+
             if (sinStock) {
                 btnAccion.innerHTML = '<i class="fas fa-times-circle"></i> Producto Agotado';
                 btnAccion.style.background = '#cbd5e1'; 
@@ -102,13 +105,51 @@ async function cargarDetalleProducto() {
                 btnAccion.style.cursor = 'not-allowed';
                 btnAccion.onclick = (e) => { e.preventDefault(); };
             } else {
+                // 1. Crear selectores si hay múltiples opciones
+                let selectsHTML = '';
+                
+                if (Array.isArray(data.material) && data.material.length > 0) {
+                    selectsHTML += `
+                        <div style="margin-bottom: 10px;">
+                            <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-body); margin-bottom: 5px; display: block;">Selecciona el Material:</label>
+                            <select id="select-material" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; font-family: inherit;">
+                                ${data.material.map(m => `<option value="${m}">${m}</option>`).join('')}
+                            </select>
+                        </div>
+                    `;
+                }
+                
+                if (Array.isArray(data.color) && data.color.length > 0) {
+                    selectsHTML += `
+                        <div style="margin-bottom: 15px;">
+                            <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-body); margin-bottom: 5px; display: block;">Selecciona el Color:</label>
+                            <select id="select-color" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; outline: none; font-family: inherit;">
+                                ${data.color.map(c => `<option value="${c}">${c}</option>`).join('')}
+                            </select>
+                        </div>
+                    `;
+                }
+
+                // Insertar los selectores justo antes del botón
+                if (selectsHTML !== '') {
+                    const selectorDiv = document.createElement('div');
+                    selectorDiv.innerHTML = selectsHTML;
+                    containerBotones.insertBefore(selectorDiv, btnAccion);
+                }
+
+                // 2. Configurar el botón para que lea los selectores
                 btnAccion.innerHTML = '<i class="fas fa-cart-plus"></i> Agregar al Carrito';
                 btnAccion.style.background = 'var(--secondary-brand)'; 
+                
                 btnAccion.onclick = () => {
+                    const selectorMat = document.getElementById('select-material');
+                    const selectorCol = document.getElementById('select-color');
+                    
+                    const matElegido = selectorMat ? selectorMat.value : (Array.isArray(data.material) ? data.material[0] : null);
+                    const colElegido = selectorCol ? selectorCol.value : (Array.isArray(data.color) ? data.color[0] : null);
+
                     if(typeof window.agregarAlCarrito === 'function') {
-                        window.agregarAlCarrito(data.id, data.titulo, precioMostrar, imagenUrl, esOfertaValida ? data.precio : null);
-                    } else {
-                        console.error("Módulo de carrito no cargado.");
+                        window.agregarAlCarrito(data.id, data.titulo, precioMostrar, imagenUrl, esOfertaValida ? data.precio : null, matElegido, colElegido);
                     }
                 };
             }

@@ -32,9 +32,18 @@ window.renderizarCarrito = function() {
                 <div class="cart-item-price" style="display: flex; flex-direction: column; line-height: 1.2; margin-top: 5px;">
                     <span style="text-decoration: line-through; color: #a0aec0; font-size: 0.8rem; font-weight: 500;">$${item.precioOriginal.toLocaleString('es-CL')}</span>
                     <span style="color: var(--danger); font-size: 1.1rem;">$${item.precio.toLocaleString('es-CL')}</span>
-                    <span style="color: #27ae60; font-size: 0.75rem; font-weight: 700;">¡Ahorras $${ahorro.toLocaleString('es-CL')}!</span>
                 </div>
             `;
+        }
+
+        // Mostrar variantes si existen
+        let variantesHTML = '';
+        if (item.material || item.color) {
+            variantesHTML = `<div style="font-size: 0.75rem; color: #64748b; margin-top: 4px;">
+                ${item.material ? `Mat: <strong>${item.material}</strong>` : ''} 
+                ${item.material && item.color ? ' | ' : ''}
+                ${item.color ? `Color: <strong>${item.color}</strong>` : ''}
+            </div>`;
         }
 
         const div = document.createElement('div');
@@ -43,6 +52,7 @@ window.renderizarCarrito = function() {
             <img src="${item.imagen}" alt="${item.titulo}" loading="lazy">
             <div class="cart-item-info">
                 <div class="cart-item-title">${item.titulo}</div>
+                ${variantesHTML}
                 ${precioInfo}
                 <button class="btn-remove-item" onclick="eliminarDelCarrito(${index})"><i class="fas fa-trash"></i> Quitar</button>
             </div>
@@ -52,13 +62,13 @@ window.renderizarCarrito = function() {
     if(priceText) priceText.textContent = `$${total.toLocaleString('es-CL')}`;
 };
 
-window.agregarAlCarrito = function(id, titulo, precio, imagen, precioOriginal = null) {
-    carrito.push({ id, titulo, precio, imagen, precioOriginal });
+// Modificamos la función para recibir material y color
+window.agregarAlCarrito = function(id, titulo, precio, imagen, precioOriginal = null, material = null, color = null) {
+    carrito.push({ id, titulo, precio, imagen, precioOriginal, material, color });
     localStorage.setItem('dycrea_carrito', JSON.stringify(carrito));
     actualizarIconoCarrito();
     renderizarCarrito();
     
-    // Validamos si la función global de notificación existe (está en main.js)
     if(typeof window.mostrarNotificacion === 'function') {
         window.mostrarNotificacion('¡Agregado al carrito!', 'info');
     }
@@ -72,7 +82,6 @@ window.eliminarDelCarrito = function(index) {
     renderizarCarrito();
 };
 
-// === MANEJO DE LA VISTA DEL CARRITO ===
 window.abrirCarrito = function() {
     document.getElementById('cartSidebar')?.classList.add('active');
     document.getElementById('cartOverlay')?.classList.add('active');
@@ -112,8 +121,13 @@ window.procesarCompra = async function() {
     let lineasProductos = ``;
 
     carrito.forEach((item, i) => {
-        lineasProductos += `${i+1}. ${item.titulo} — $${item.precio.toLocaleString('es-CL')}\n`;
-        detalleCorreo   += `${i+1}. ${item.titulo} — $${item.precio.toLocaleString('es-CL')}\n`;
+        let variantes = [];
+        if (item.material) variantes.push(item.material);
+        if (item.color) variantes.push(item.color);
+        let textoVariantes = variantes.length > 0 ? ` [${variantes.join(' - ')}]` : '';
+
+        lineasProductos += `${i+1}. ${item.titulo}${textoVariantes} — $${item.precio.toLocaleString('es-CL')}\n`;
+        detalleCorreo   += `${i+1}. ${item.titulo}${textoVariantes} — $${item.precio.toLocaleString('es-CL')}\n`;
         total += item.precio;
     });
 
@@ -124,12 +138,10 @@ window.procesarCompra = async function() {
 ${lineasProductos}
 💰 *Total estimado: $${total.toLocaleString('es-CL')} CLP*
 
-⚠️ _Entiendo que este pedido queda pendiente de confirmación por parte del vendedor._
-
-Cuando puedas, por favor confírmame la disponibilidad y envíame los datos para la transferencia. ¡Gracias! 😊`;
+⚠️ _Entiendo que este pedido queda pendiente de confirmación por parte del vendedor._`;
 
     try {
-        await emailjs.send("service_3qfabfd", "template_fso1jri", {
+        await emailjs.send("service_3qfabfd", "template_fso1jri", { // Tu ID aquí
             nombre_cliente: nombre,
             telefono_cliente: telefonoCompleto,
             total_carrito: `$${total.toLocaleString('es-CL')}`,
@@ -145,14 +157,14 @@ Cuando puedas, por favor confírmame la disponibilidad y envíame los datos para
     actualizarIconoCarrito();
     
     document.getElementById('cartItemsContainer').innerHTML = `
-        <div style="text-align: center; padding: 40px 20px; animation: fadeInPage 0.4s;">
+        <div style="text-align: center; padding: 40px 20px;">
             <i class="fas fa-check-circle" style="font-size: 4.5rem; color: #25D366; margin-bottom: 20px;"></i>
             <h3 style="color: var(--secondary-brand); font-size: 1.5rem; margin-bottom: 15px;">¡Listo, ${nombre}!</h3>
-            <p style="color: var(--text-body); font-size: 0.95rem; margin-bottom: 25px; line-height: 1.6;">
+            <p style="color: var(--text-body); font-size: 0.95rem; margin-bottom: 25px;">
                 Tu cotización fue generada y hemos abierto WhatsApp.<br><br>
                 <strong style="color: var(--danger);">¡IMPORTANTE!</strong> No olvides presionar <strong>"Enviar"</strong> en tu chat.
             </p>
-            <button onclick="cerrarYResetearCarrito()" style="background: #f8fafc; color: var(--text-dark); padding: 12px 20px; border: 2px solid #e2e8f0; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; transition: 0.3s;">
+            <button onclick="cerrarYResetearCarrito()" style="background: #f8fafc; color: var(--text-dark); padding: 12px 20px; border: 2px solid #e2e8f0; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%;">
                 Entendido, cerrar
             </button>
         </div>
@@ -167,7 +179,6 @@ Cuando puedas, por favor confírmame la disponibilidad y envíame los datos para
     btn.style.background = "#25D366"; 
 };
 
-// === EVENTOS UNIVERSALES AL CARGAR ===
 document.addEventListener('DOMContentLoaded', () => {
     actualizarIconoCarrito();
     renderizarCarrito();
